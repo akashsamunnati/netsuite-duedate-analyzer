@@ -1,0 +1,2 @@
+# This file ensures the errors directory is tracked by Git
+# Error files will be generated here by the GitHub Actions workflow

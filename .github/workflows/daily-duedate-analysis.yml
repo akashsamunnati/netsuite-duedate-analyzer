@@ -1,0 +1,180 @@
+name: Daily Due Date Log Analysis
+
+on:
+  schedule:
+    - cron: '30 12 * * *'
+  workflow_dispatch:
+    inputs:
+      test_run:
+        description: 'Manual test run'
+        required: false
+        default: 'true'
+
+jobs:
+  analyze-duedate-logs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install Dependencies
+        run: |
+          echo "Installing Node.js dependencies..."
+          npm install
+          echo "Dependencies installed successfully"
+      
+      - name: Verify Environment
+        run: |
+          echo "Environment verification:"
+          echo "Node.js version: $(node --version)"
+          echo "Current date: $(date)"
+          echo "Current directory: $(pwd)"
+          echo "Files in directory:"
+          ls -la
+          echo "Scripts directory:"
+          ls -la scripts/
+      
+      - name: Run Due Date Log Analysis
+        env:
+          NETSUITE_PROD_ACCOUNT_ID: ${{ secrets.NETSUITE_PROD_ACCOUNT_ID }}
+          NETSUITE_PROD_CONSUMER_KEY: ${{ secrets.NETSUITE_PROD_CONSUMER_KEY }}
+          NETSUITE_PROD_CONSUMER_SECRET: ${{ secrets.NETSUITE_PROD_CONSUMER_SECRET }}
+          NETSUITE_PROD_TOKEN_ID: ${{ secrets.NETSUITE_PROD_TOKEN_ID }}
+          NETSUITE_PROD_TOKEN_SECRET: ${{ secrets.NETSUITE_PROD_TOKEN_SECRET }}
+          NETSUITE_PROD_RESTLET_URL: ${{ secrets.NETSUITE_PROD_RESTLET_URL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          echo "Starting Due Date log analysis..."
+          echo "Analysis date: $(date +'%Y-%m-%d')"
+          echo "Current time: $(date +'%H:%M:%S %Z')"
+          
+          npm start
+          
+          echo "Analysis execution completed"
+      
+      - name: List Generated Files
+        run: |
+          echo "Generated files summary:"
+          
+          if [ -d "logs" ]; then
+            echo "Log files downloaded:"
+            ls -la logs/ || echo "No log files found"
+            echo ""
+          fi
+          
+          if [ -d "errors" ]; then
+            echo "Error reports generated:"
+            ls -la errors/
+            echo ""
+            
+            echo "Error file previews:"
+            for file in errors/*.txt; do
+              if [ -f "$file" ]; then
+                echo "--- $(basename "$file") ---"
+                head -20 "$file"
+                echo ""
+                echo "... (file continues) ..."
+                echo ""
+              fi
+            done
+          else
+            echo "No errors directory found"
+          fi
+      
+      - name: Commit Generated Files
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          echo "Adding new files to repository..."
+          
+          if [ -d "errors" ]; then
+            git add errors/
+            echo "Added error files"
+          fi
+          
+          if [ -d "logs" ]; then
+            git add logs/
+            echo "Added log files"
+          fi
+          
+          if git diff --staged --quiet; then
+            echo "No new files to commit"
+          else
+            TODAY=$(date +'%Y-%m-%d')
+            git commit -m "Daily Due Date log analysis results for $TODAY"
+            git push origin main
+            echo "Changes committed and pushed to repository"
+          fi
+      
+      - name: Create Workflow Summary
+        if: always()
+        run: |
+          echo "# Daily Due Date Log Analysis Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Analysis Date:** $(date +'%Y-%m-%d')" >> $GITHUB_STEP_SUMMARY
+          echo "**Execution Time:** $(date +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -d "errors" ]; then
+            ERROR_FILES=$(find errors/ -name "*.txt" -type f | wc -l)
+            echo "**Error Files Generated:** $ERROR_FILES" >> $GITHUB_STEP_SUMMARY
+            
+            if [ $ERROR_FILES -gt 0 ]; then
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "## Generated Files:" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              
+              for file in errors/*.txt; do
+                if [ -f "$file" ]; then
+                  BASENAME=$(basename "$file")
+                  FILESIZE=$(stat --format=%s "$file" 2>/dev/null || echo "unknown")
+                  echo "- \`$BASENAME\` (${FILESIZE} bytes)" >> $GITHUB_STEP_SUMMARY
+                fi
+              done
+            fi
+          else
+            echo "**Error Files Generated:** 0" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ -d "logs" ]; then
+            LOG_FILES=$(find logs/ -name "*.txt" -type f | wc -l)
+            echo "**Log Files Downloaded:** $LOG_FILES" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "**Log Files Downloaded:** 0" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "**Next Analysis:** Tomorrow at 6:00 PM IST" >> $GITHUB_STEP_SUMMARY
+          echo "**Files Location:** \`errors/\` directory in repository" >> $GITHUB_STEP_SUMMARY
+          echo "**View Files:** [Browse Repository](https://github.com/${{ github.repository }})" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Upload Analysis Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: duedate-analysis-${{ github.run_number }}
+          path: |
+            errors/
+            logs/
+          retention-days: 30
+          if-no-files-found: warn
+      
+      - name: Cleanup
+        if: always()
+        run: |
+          echo "Cleaning up temporary files..."
+          echo "Cleanup completed"

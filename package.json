@@ -1,0 +1,16 @@
+{
+  "name": "netsuite-duedate-analyzer",
+  "version": "1.0.0",
+  "description": "Automated NetSuite Due Date log analysis with Gemini AI",
+  "main": "scripts/run-analysis.js",
+  "scripts": {
+    "start": "node scripts/run-analysis.js",
+    "test": "node scripts/run-analysis.js"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "Your Name",
+  "license": "MIT"
+}
