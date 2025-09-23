@@ -15,6 +15,15 @@ class NetSuiteDownloader {
         if (missing.length > 0) {
             throw new Error(`Missing required configuration: ${missing.join(', ')}`);
         }
+        
+        // Enhanced validation logging
+        console.log('Configuration validation:');
+        console.log('✓ Account ID:', this.config.accountId);
+        console.log('✓ Consumer Key length:', this.config.consumerKey.length);
+        console.log('✓ Consumer Secret length:', this.config.consumerSecret.length);
+        console.log('✓ Token ID length:', this.config.tokenId.length);
+        console.log('✓ Token Secret length:', this.config.tokenSecret.length);
+        console.log('✓ RESTlet URL:', this.config.restletUrl);
     }
     
     async downloadTodaysDueDateLogs() {
@@ -22,9 +31,8 @@ class NetSuiteDownloader {
             const today = new Date().toISOString().split('T')[0];
             console.log(`Downloading Due Date logs for date: ${today}`);
             
-            // FIX: Changed action to match your RESTlet
             const requestBody = {
-                action: 'downloadTodaysLogs',  // Changed from 'downloadLogs'
+                action: 'downloadTodaysLogs',
                 date: today
             };
             
@@ -35,7 +43,14 @@ class NetSuiteDownloader {
             
             console.log('Raw NetSuite response:', JSON.stringify(response, null, 2));
             
-            // FIX: Better error handling
+            // Handle authentication error specifically
+            if (response.error) {
+                if (response.error.code === 'INVALID_LOGIN_ATTEMPT') {
+                    throw new Error(`Authentication failed: ${response.error.message}. Check your OAuth credentials and integration setup.`);
+                }
+                throw new Error(`NetSuite API error: ${response.error.code} - ${response.error.message}`);
+            }
+            
             if (!response) {
                 throw new Error(`NetSuite RESTlet error: No response received`);
             }
@@ -53,13 +68,11 @@ class NetSuiteDownloader {
             const logFiles = [];
             const logsDir = path.join(process.cwd(), 'logs');
             
-            // Ensure logs directory exists
             if (!fs.existsSync(logsDir)) {
                 fs.mkdirSync(logsDir, { recursive: true });
                 console.log('Created logs directory');
             }
             
-            // FIX: Handle empty logFiles array properly
             const responseLogFiles = response.logFiles || [];
             
             if (responseLogFiles.length > 0) {
@@ -67,13 +80,10 @@ class NetSuiteDownloader {
                 
                 for (let i = 0; i < responseLogFiles.length; i++) {
                     const logData = responseLogFiles[i];
-                    
-                    // Use the filename from the response or create one
                     const fileName = logData.name || `dueDateLogs-${today}-${i + 1}.txt`;
                     const filePath = path.join(logsDir, fileName);
-                    
-                    // Write log content to file
                     const content = logData.content || '';
+                    
                     fs.writeFileSync(filePath, content, 'utf8');
                     
                     logFiles.push({
@@ -89,10 +99,6 @@ class NetSuiteDownloader {
                 }
             } else {
                 console.log('No Due Date log files found for today');
-                console.log('This could mean:');
-                console.log('  - No due date processing occurred today');
-                console.log('  - Files are in different locations than expected');
-                console.log('  - File search criteria need adjustment');
             }
             
             return {
@@ -105,16 +111,6 @@ class NetSuiteDownloader {
             
         } catch (error) {
             console.error('Error downloading Due Date logs:', error.message);
-            
-            // Enhanced error logging
-            if (error.response) {
-                console.error('HTTP Response:', error.response);
-            }
-            
-            if (error.stack) {
-                console.error('Stack trace:', error.stack);
-            }
-            
             throw error;
         }
     }
@@ -129,7 +125,7 @@ class NetSuiteDownloader {
                 console.log('Request method: POST');
                 console.log('Request body size:', postData.length, 'bytes');
                 
-                // Create OAuth 1.0 signature
+                // Create OAuth 1.0 signature with debug info
                 const oauth = this.createOAuthHeader('POST', this.config.restletUrl);
                 console.log('OAuth header generated successfully');
                 
@@ -145,8 +141,6 @@ class NetSuiteDownloader {
                         'User-Agent': 'NetSuite-DueDateAnalyzer/1.0'
                     }
                 };
-                
-                console.log('HTTP request options configured');
                 
                 const req = https.request(options, (res) => {
                     let data = '';
@@ -172,7 +166,6 @@ class NetSuiteDownloader {
                             
                         } catch (parseError) {
                             console.error('JSON parse error:', parseError.message);
-                            console.error('Response data that failed to parse:', data);
                             reject(new Error(`Failed to parse JSON response: ${parseError.message}\nResponse: ${data}`));
                         }
                     });
@@ -183,15 +176,7 @@ class NetSuiteDownloader {
                     reject(new Error(`Network error: ${error.message}`));
                 });
                 
-                req.on('timeout', () => {
-                    console.error('Request timeout');
-                    reject(new Error('Request timeout - NetSuite did not respond within expected time'));
-                });
-                
-                // Set timeout
-                req.setTimeout(30000); // 30 seconds
-                
-                console.log('Sending request...');
+                req.setTimeout(30000);
                 req.write(postData);
                 req.end();
                 
@@ -207,32 +192,43 @@ class NetSuiteDownloader {
         
         console.log('Creating OAuth header for:', method, url);
         
+        // Fix potential timestamp issue - use current UTC time
+        const timestamp = Math.floor(Date.now() / 1000).toString();
+        console.log('Using timestamp:', timestamp, '(', new Date(parseInt(timestamp) * 1000).toISOString(), ')');
+        
         const oauthParams = {
             oauth_consumer_key: this.config.consumerKey,
             oauth_token: this.config.tokenId,
             oauth_signature_method: 'HMAC-SHA256',
-            oauth_timestamp: Math.floor(Date.now() / 1000).toString(),
+            oauth_timestamp: timestamp,
             oauth_nonce: crypto.randomBytes(16).toString('hex'),
             oauth_version: '1.0'
         };
         
-        console.log('OAuth parameters (excluding signature):', {
-            ...oauthParams,
+        console.log('OAuth parameters:', {
             oauth_consumer_key: oauthParams.oauth_consumer_key.substring(0, 10) + '...',
-            oauth_token: oauthParams.oauth_token.substring(0, 10) + '...'
+            oauth_token: oauthParams.oauth_token.substring(0, 10) + '...',
+            oauth_signature_method: oauthParams.oauth_signature_method,
+            oauth_timestamp: oauthParams.oauth_timestamp,
+            oauth_nonce: oauthParams.oauth_nonce.substring(0, 10) + '...',
+            oauth_version: oauthParams.oauth_version
         });
         
-        // Create parameter string
-        const paramString = Object.keys(oauthParams)
-            .sort()
-            .map(key => `${key}=${encodeURIComponent(oauthParams[key])}`)
+        // Create parameter string (alphabetically sorted)
+        const sortedParams = Object.keys(oauthParams).sort();
+        const paramString = sortedParams
+            .map(key => `${this.percentEncode(key)}=${this.percentEncode(oauthParams[key])}`)
             .join('&');
         
+        console.log('Parameter string length:', paramString.length);
+        
         // Create signature base string
-        const signatureBase = `${method}&${encodeURIComponent(url)}&${encodeURIComponent(paramString)}`;
+        const signatureBase = `${method}&${this.percentEncode(url)}&${this.percentEncode(paramString)}`;
+        console.log('Signature base string length:', signatureBase.length);
         
         // Create signing key
-        const signingKey = `${encodeURIComponent(this.config.consumerSecret)}&${encodeURIComponent(this.config.tokenSecret)}`;
+        const signingKey = `${this.percentEncode(this.config.consumerSecret)}&${this.percentEncode(this.config.tokenSecret)}`;
+        console.log('Signing key created (length:', signingKey.length, ')');
         
         // Create signature
         const signature = crypto
@@ -240,36 +236,58 @@ class NetSuiteDownloader {
             .update(signatureBase)
             .digest('base64');
         
+        console.log('Signature created:', signature.substring(0, 20) + '...');
+        
         oauthParams.oauth_signature = signature;
         
         // Create authorization header
-        const authHeader = 'OAuth ' + Object.keys(oauthParams)
-            .map(key => `${key}="${encodeURIComponent(oauthParams[key])}"`)
+        const authHeader = 'OAuth ' + sortedParams
+            .concat('oauth_signature')
+            .sort()
+            .map(key => `${key}="${this.percentEncode(oauthParams[key])}"`)
             .join(', ');
         
-        console.log('OAuth signature created successfully');
+        console.log('Authorization header created (length:', authHeader.length, ')');
         
         return authHeader;
     }
     
-    // Test method to check RESTlet connectivity
-    async testConnection() {
-        try {
-            console.log('Testing NetSuite RESTlet connection...');
+    // Proper percent encoding for OAuth
+    percentEncode(str) {
+        return encodeURIComponent(str)
+            .replace(/[!'()*]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`);
+    }
+    
+    // Simple connectivity test
+    async testBasicConnection() {
+        return new Promise((resolve) => {
+            const url = new URL(this.config.restletUrl);
             
-            const response = await this.makeNetSuiteRequest({
-                action: 'downloadTodaysLogs',
-                date: new Date().toISOString().split('T')[0],
-                test: true
+            const options = {
+                hostname: url.hostname,
+                port: 443,
+                path: url.pathname,
+                method: 'GET',
+                timeout: 10000
+            };
+            
+            const req = https.request(options, (res) => {
+                console.log('Basic connection test - Status:', res.statusCode);
+                resolve(res.statusCode);
             });
             
-            console.log('Connection test result:', response);
-            return response.success === true;
+            req.on('error', (error) => {
+                console.error('Basic connection failed:', error.message);
+                resolve(null);
+            });
             
-        } catch (error) {
-            console.error('Connection test failed:', error.message);
-            return false;
-        }
+            req.on('timeout', () => {
+                console.error('Basic connection timeout');
+                resolve(null);
+            });
+            
+            req.end();
+        });
     }
 }
 
