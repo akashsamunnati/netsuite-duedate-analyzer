@@ -39,7 +39,12 @@ class DueDateLogAnalyzer {
             
             // Step 1: Download today's Due Date log files from NetSuite
             console.log('\nSTEP 1: Downloading today\'s Due Date log files from NetSuite...');
-            const logFiles = await this.netsuiteDownloader.downloadTodaysDueDateLogs();
+            
+            // FIX: Get the full result object, then extract logFiles array
+            const result = await this.netsuiteDownloader.downloadTodaysDueDateLogs();
+            const logFiles = result.logFiles || []; // Extract the logFiles array
+            
+            console.log(`Downloaded ${logFiles.length} Due Date log files for today`);
             
             if (logFiles.length === 0) {
                 console.log('No Due Date log files found for today. Creating no-logs report...');
@@ -47,7 +52,6 @@ class DueDateLogAnalyzer {
                 return;
             }
             
-            console.log(`Downloaded ${logFiles.length} Due Date log files for today`);
             logFiles.forEach(file => {
                 console.log(`   ${file.name} (${file.size} bytes)`);
             });
