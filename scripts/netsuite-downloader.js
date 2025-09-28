@@ -1,4 +1,18 @@
-const { NetSuiteDownloader } = require('./netsuite-downloader');
+// Try both import methods to handle different export formats
+let NetSuiteDownloader;
+try {
+    // Try destructured import first
+    NetSuiteDownloader = require('./netsuite-downloader').NetSuiteDownloader;
+} catch (error) {
+    try {
+        // Try default import
+        NetSuiteDownloader = require('./netsuite-downloader');
+    } catch (error2) {
+        console.error('Failed to import NetSuiteDownloader:', error.message);
+        throw new Error('Cannot import NetSuiteDownloader. Check the export format in netsuite-downloader.js');
+    }
+}
+
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -13,6 +27,7 @@ class DueDateLogAnalyzer {
             restletUrl: process.env.NETSUITE_PROD_RESTLET_URL,
         };
         
+        console.log('Creating NetSuiteDownloader instance...');
         this.downloader = new NetSuiteDownloader(this.config);
         this.today = new Date().toISOString().split('T')[0];
     }
