@@ -1,6 +1,7 @@
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 class NetSuiteDownloader {
     constructor(config) {
@@ -16,7 +17,6 @@ class NetSuiteDownloader {
             throw new Error(`Missing required configuration: ${missing.join(', ')}`);
         }
         
-        // Enhanced validation logging
         console.log('Configuration validation:');
         console.log('✓ Account ID:', this.config.accountId);
         console.log('✓ Consumer Key length:', this.config.consumerKey.length);
@@ -24,6 +24,61 @@ class NetSuiteDownloader {
         console.log('✓ Token ID length:', this.config.tokenId.length);
         console.log('✓ Token Secret length:', this.config.tokenSecret.length);
         console.log('✓ RESTlet URL:', this.config.restletUrl);
+    }
+    
+    // Use the same OAuth generation logic as your working deploy script
+    generateOAuthHeader(url, method, body = null) {
+        const timestamp = Math.floor(Date.now() / 1000);
+        const nonce = crypto.randomBytes(16).toString('hex');
+
+        // Parse URL to separate base URL and query parameters
+        const urlObj = new URL(url);
+        const baseUrl = `${urlObj.protocol}//${urlObj.host}${urlObj.pathname}`;
+        
+        // Get query parameters
+        const queryParams = {};
+        urlObj.searchParams.forEach((value, key) => {
+            queryParams[key] = value;
+        });
+
+        const oauthParams = {
+            oauth_consumer_key: this.config.consumerKey,
+            oauth_nonce: nonce,
+            oauth_signature_method: 'HMAC-SHA256',
+            oauth_timestamp: timestamp,
+            oauth_token: this.config.tokenId,
+            oauth_version: '1.0'
+        };
+
+        // Combine OAuth params and query params for signature
+        const allParams = { ...oauthParams, ...queryParams };
+        
+        const paramString = Object.keys(allParams)
+            .sort()
+            .map(key => `${this.encodeRFC3986(key)}=${this.encodeRFC3986(allParams[key])}`)
+            .join('&');
+
+        const baseString = `${method}&${this.encodeRFC3986(baseUrl)}&${this.encodeRFC3986(paramString)}`;
+        const signingKey = `${this.encodeRFC3986(this.config.consumerSecret)}&${this.encodeRFC3986(this.config.tokenSecret)}`;
+        const signature = crypto.createHmac('sha256', signingKey).update(baseString).digest('base64');
+
+        // Format exactly like your working deploy script
+        return 'OAuth ' + [
+            `realm="${this.encodeRFC3986(this.config.accountId)}"`,
+            `oauth_consumer_key="${this.encodeRFC3986(this.config.consumerKey)}"`,
+            `oauth_nonce="${this.encodeRFC3986(nonce)}"`,
+            `oauth_signature="${this.encodeRFC3986(signature)}"`,
+            `oauth_signature_method="HMAC-SHA256"`,
+            `oauth_timestamp="${this.encodeRFC3986(timestamp)}"`,
+            `oauth_token="${this.encodeRFC3986(this.config.tokenId)}"`,
+            `oauth_version="1.0"`
+        ].join(', ');
+    }
+
+    // Use the same RFC3986 encoding as your working script
+    encodeRFC3986(str) {
+        return encodeURIComponent(str)
+            .replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase());
     }
     
     async downloadTodaysDueDateLogs() {
@@ -116,174 +171,105 @@ class NetSuiteDownloader {
     }
     
     async makeNetSuiteRequest(requestBody) {
+        const postData = JSON.stringify(requestBody);
+        
+        console.log('Making request to:', this.config.restletUrl);
+        console.log('Request method: POST');
+        console.log('Request body size:', postData.length, 'bytes');
+        
+        // Use the same OAuth generation as your working deploy script
+        const authHeader = this.generateOAuthHeader(this.config.restletUrl, 'POST', postData);
+        console.log('OAuth header generated successfully');
+        
         return new Promise((resolve, reject) => {
-            try {
-                const postData = JSON.stringify(requestBody);
-                const url = new URL(this.config.restletUrl);
-                
-                console.log('Making request to:', this.config.restletUrl);
-                console.log('Request method: POST');
-                console.log('Request body size:', postData.length, 'bytes');
-                
-                // Create OAuth 1.0 signature with debug info
-                const oauth = this.createOAuthHeader('POST', this.config.restletUrl);
-                console.log('OAuth header generated successfully');
-                
-                const options = {
-                    hostname: url.hostname,
-                    port: 443,
-                    path: url.pathname + url.search,
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Content-Length': Buffer.byteLength(postData),
-                        'Authorization': oauth,
-                        'User-Agent': 'NetSuite-DueDateAnalyzer/1.0'
-                    }
-                };
-                
-                const req = https.request(options, (res) => {
-                    let data = '';
-                    
-                    console.log('HTTP Response Status:', res.statusCode);
-                    console.log('HTTP Response Headers:', res.headers);
-                    
-                    res.on('data', (chunk) => {
-                        data += chunk;
-                    });
-                    
-                    res.on('end', () => {
-                        try {
-                            console.log('Raw response data:', data);
-                            
-                            if (!data || data.trim() === '') {
-                                reject(new Error('Empty response from NetSuite'));
-                                return;
-                            }
-                            
-                            const response = JSON.parse(data);
-                            resolve(response);
-                            
-                        } catch (parseError) {
-                            console.error('JSON parse error:', parseError.message);
-                            reject(new Error(`Failed to parse JSON response: ${parseError.message}\nResponse: ${data}`));
-                        }
-                    });
-                });
-                
-                req.on('error', (error) => {
-                    console.error('HTTPS request error:', error);
-                    reject(new Error(`Network error: ${error.message}`));
-                });
-                
-                req.setTimeout(30000);
-                req.write(postData);
-                req.end();
-                
-            } catch (error) {
-                console.error('Error setting up request:', error);
-                reject(error);
-            }
-        });
-    }
-    
-    createOAuthHeader(method, url) {
-        const crypto = require('crypto');
-        
-        console.log('Creating OAuth header for:', method, url);
-        
-        // Fix potential timestamp issue - use current UTC time
-        const timestamp = Math.floor(Date.now() / 1000).toString();
-        console.log('Using timestamp:', timestamp, '(', new Date(parseInt(timestamp) * 1000).toISOString(), ')');
-        
-        const oauthParams = {
-            oauth_consumer_key: this.config.consumerKey,
-            oauth_token: this.config.tokenId,
-            oauth_signature_method: 'HMAC-SHA256',
-            oauth_timestamp: timestamp,
-            oauth_nonce: crypto.randomBytes(16).toString('hex'),
-            oauth_version: '1.0'
-        };
-        
-        console.log('OAuth parameters:', {
-            oauth_consumer_key: oauthParams.oauth_consumer_key.substring(0, 10) + '...',
-            oauth_token: oauthParams.oauth_token.substring(0, 10) + '...',
-            oauth_signature_method: oauthParams.oauth_signature_method,
-            oauth_timestamp: oauthParams.oauth_timestamp,
-            oauth_nonce: oauthParams.oauth_nonce.substring(0, 10) + '...',
-            oauth_version: oauthParams.oauth_version
-        });
-        
-        // Create parameter string (alphabetically sorted)
-        const sortedParams = Object.keys(oauthParams).sort();
-        const paramString = sortedParams
-            .map(key => `${this.percentEncode(key)}=${this.percentEncode(oauthParams[key])}`)
-            .join('&');
-        
-        console.log('Parameter string length:', paramString.length);
-        
-        // Create signature base string
-        const signatureBase = `${method}&${this.percentEncode(url)}&${this.percentEncode(paramString)}`;
-        console.log('Signature base string length:', signatureBase.length);
-        
-        // Create signing key
-        const signingKey = `${this.percentEncode(this.config.consumerSecret)}&${this.percentEncode(this.config.tokenSecret)}`;
-        console.log('Signing key created (length:', signingKey.length, ')');
-        
-        // Create signature
-        const signature = crypto
-            .createHmac('sha256', signingKey)
-            .update(signatureBase)
-            .digest('base64');
-        
-        console.log('Signature created:', signature.substring(0, 20) + '...');
-        
-        oauthParams.oauth_signature = signature;
-        
-        // Create authorization header
-        const authHeader = 'OAuth ' + sortedParams
-            .concat('oauth_signature')
-            .sort()
-            .map(key => `${key}="${this.percentEncode(oauthParams[key])}"`)
-            .join(', ');
-        
-        console.log('Authorization header created (length:', authHeader.length, ')');
-        
-        return authHeader;
-    }
-    
-    // Proper percent encoding for OAuth
-    percentEncode(str) {
-        return encodeURIComponent(str)
-            .replace(/[!'()*]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`);
-    }
-    
-    // Simple connectivity test
-    async testBasicConnection() {
-        return new Promise((resolve) => {
-            const url = new URL(this.config.restletUrl);
-            
             const options = {
-                hostname: url.hostname,
-                port: 443,
-                path: url.pathname,
-                method: 'GET',
-                timeout: 10000
+                method: 'POST',
+                headers: {
+                    'Authorization': authHeader,
+                    'Content-Type': 'application/json',
+                    'Content-Length': Buffer.byteLength(postData)
+                }
             };
             
-            const req = https.request(options, (res) => {
-                console.log('Basic connection test - Status:', res.statusCode);
-                resolve(res.statusCode);
+            console.log('HTTP request options configured');
+            
+            const req = https.request(this.config.restletUrl, options, (res) => {
+                let data = '';
+                
+                console.log('HTTP Response Status:', res.statusCode);
+                console.log('HTTP Response Headers:', res.headers);
+                
+                res.on('data', (chunk) => {
+                    data += chunk;
+                });
+                
+                res.on('end', () => {
+                    try {
+                        console.log('Raw response data:', data);
+                        
+                        if (!data || data.trim() === '') {
+                            reject(new Error('Empty response from NetSuite'));
+                            return;
+                        }
+                        
+                        const response = JSON.parse(data);
+                        resolve(response);
+                        
+                    } catch (parseError) {
+                        console.error('JSON parse error:', parseError.message);
+                        reject(new Error(`Failed to parse JSON response: ${parseError.message}\nResponse: ${data}`));
+                    }
+                });
             });
             
             req.on('error', (error) => {
-                console.error('Basic connection failed:', error.message);
-                resolve(null);
+                console.error('HTTPS request error:', error);
+                reject(new Error(`Network error: ${error.message}`));
             });
             
-            req.on('timeout', () => {
-                console.error('Basic connection timeout');
-                resolve(null);
+            req.setTimeout(30000);
+            
+            console.log('Sending request...');
+            req.write(postData);
+            req.end();
+        });
+    }
+
+    // Test method using the same auth as your working deploy script
+    async testAuth() {
+        const baseUrl = `https://${this.config.accountId.toLowerCase().replace('_', '-')}.suitetalk.api.netsuite.com`;
+        const url = `${baseUrl}/services/rest/record/v1/metadata-catalog`;
+        const authHeader = this.generateOAuthHeader(url, 'GET');
+
+        return new Promise((resolve, reject) => {
+            const options = {
+                method: 'GET',
+                headers: {
+                    'Authorization': authHeader,
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            console.log('Testing authentication with metadata-catalog...');
+
+            const req = https.request(url, options, res => {
+                let data = '';
+                res.on('data', chunk => data += chunk);
+                res.on('end', () => {
+                    console.log(`Auth test response: HTTP ${res.statusCode}`);
+                    if (res.statusCode === 200) {
+                        console.log('✓ Authentication successful');
+                        resolve(true);
+                    } else {
+                        console.log(`✗ Authentication failed: HTTP ${res.statusCode} - ${data}`);
+                        resolve(false);
+                    }
+                });
+            });
+
+            req.on('error', (error) => {
+                console.error('Auth test error:', error.message);
+                resolve(false);
             });
             
             req.end();
