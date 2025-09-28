@@ -1,280 +1,236 @@
-const https = require('https');
-const fs = require('fs');
+const { NetSuiteDownloader } = require('./netsuite-downloader');
+const fs = require('fs').promises;
 const path = require('path');
-const crypto = require('crypto');
 
-class NetSuiteDownloader {
-    constructor(config) {
-        this.config = config;
-        this.validateConfig();
-    }
-    
-    validateConfig() {
-        const required = ['accountId', 'consumerKey', 'consumerSecret', 'tokenId', 'tokenSecret', 'restletUrl'];
-        const missing = required.filter(key => !this.config[key]);
-        
-        if (missing.length > 0) {
-            throw new Error(`Missing required configuration: ${missing.join(', ')}`);
-        }
-        
-        console.log('Configuration validation:');
-        console.log('✓ Account ID:', this.config.accountId);
-        console.log('✓ Consumer Key length:', this.config.consumerKey.length);
-        console.log('✓ Consumer Secret length:', this.config.consumerSecret.length);
-        console.log('✓ Token ID length:', this.config.tokenId.length);
-        console.log('✓ Token Secret length:', this.config.tokenSecret.length);
-        console.log('✓ RESTlet URL:', this.config.restletUrl);
-    }
-    
-    // Use the same OAuth generation logic as your working deploy script
-    generateOAuthHeader(url, method, body = null) {
-        const timestamp = Math.floor(Date.now() / 1000);
-        const nonce = crypto.randomBytes(16).toString('hex');
-
-        // Parse URL to separate base URL and query parameters
-        const urlObj = new URL(url);
-        const baseUrl = `${urlObj.protocol}//${urlObj.host}${urlObj.pathname}`;
-        
-        // Get query parameters
-        const queryParams = {};
-        urlObj.searchParams.forEach((value, key) => {
-            queryParams[key] = value;
-        });
-
-        const oauthParams = {
-            oauth_consumer_key: this.config.consumerKey,
-            oauth_nonce: nonce,
-            oauth_signature_method: 'HMAC-SHA256',
-            oauth_timestamp: timestamp,
-            oauth_token: this.config.tokenId,
-            oauth_version: '1.0'
+class DueDateLogAnalyzer {
+    constructor() {
+        this.config = {
+            accountId: process.env.NETSUITE_PROD_ACCOUNT_ID,
+            consumerKey: process.env.NETSUITE_PROD_CONSUMER_KEY,
+            consumerSecret: process.env.NETSUITE_PROD_CONSUMER_SECRET,
+            tokenId: process.env.NETSUITE_PROD_TOKEN_ID,
+            tokenSecret: process.env.NETSUITE_PROD_TOKEN_SECRET,
+            restletUrl: process.env.NETSUITE_PROD_RESTLET_URL,
         };
-
-        // Combine OAuth params and query params for signature
-        const allParams = { ...oauthParams, ...queryParams };
         
-        const paramString = Object.keys(allParams)
-            .sort()
-            .map(key => `${this.encodeRFC3986(key)}=${this.encodeRFC3986(allParams[key])}`)
-            .join('&');
-
-        const baseString = `${method}&${this.encodeRFC3986(baseUrl)}&${this.encodeRFC3986(paramString)}`;
-        const signingKey = `${this.encodeRFC3986(this.config.consumerSecret)}&${this.encodeRFC3986(this.config.tokenSecret)}`;
-        const signature = crypto.createHmac('sha256', signingKey).update(baseString).digest('base64');
-
-        // Format exactly like your working deploy script
-        return 'OAuth ' + [
-            `realm="${this.encodeRFC3986(this.config.accountId)}"`,
-            `oauth_consumer_key="${this.encodeRFC3986(this.config.consumerKey)}"`,
-            `oauth_nonce="${this.encodeRFC3986(nonce)}"`,
-            `oauth_signature="${this.encodeRFC3986(signature)}"`,
-            `oauth_signature_method="HMAC-SHA256"`,
-            `oauth_timestamp="${this.encodeRFC3986(timestamp)}"`,
-            `oauth_token="${this.encodeRFC3986(this.config.tokenId)}"`,
-            `oauth_version="1.0"`
-        ].join(', ');
+        this.downloader = new NetSuiteDownloader(this.config);
+        this.today = new Date().toISOString().split('T')[0];
     }
 
-    // Use the same RFC3986 encoding as your working script
-    encodeRFC3986(str) {
-        return encodeURIComponent(str)
-            .replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase());
-    }
-    
-    async downloadTodaysDueDateLogs() {
+    async runDailyAnalysis() {
+        console.log('============================================================');
+        console.log('GITHUB ACTIONS - DAILY DUE DATE LOG ANALYSIS');
+        console.log(`Started at: ${new Date().toISOString()}`);
+        console.log(`Today's date: ${this.today}`);
+        console.log('============================================================');
+
         try {
-            const today = new Date().toISOString().split('T')[0];
-            console.log(`Downloading Due Date logs for date: ${today}`);
+            // Step 1: Download logs
+            console.log('\nSTEP 1: Downloading today\'s Due Date log files from NetSuite...');
+            const result = await this.downloader.downloadTodaysDueDateLogs(this.today);
             
-            const requestBody = {
-                action: 'downloadTodaysLogs',
-                date: today
-            };
+            // FIX: Properly extract logFiles from the result
+            const logFiles = result.logFiles || []; // This ensures logFiles is always an array
+            console.log(`Downloaded ${logFiles.length} Due Date log files for today`);
             
-            console.log('Request body:', JSON.stringify(requestBody, null, 2));
-            console.log('Calling NetSuite RESTlet...');
-            
-            const response = await this.makeNetSuiteRequest(requestBody);
-            
-            console.log('Raw NetSuite response:', JSON.stringify(response, null, 2));
-            
-            // Handle authentication error specifically
-            if (response.error) {
-                if (response.error.code === 'INVALID_LOGIN_ATTEMPT') {
-                    throw new Error(`Authentication failed: ${response.error.message}. Check your OAuth credentials and integration setup.`);
-                }
-                throw new Error(`NetSuite API error: ${response.error.code} - ${response.error.message}`);
-            }
-            
-            if (!response) {
-                throw new Error(`NetSuite RESTlet error: No response received`);
-            }
-            
-            if (response.success === false) {
-                throw new Error(`NetSuite RESTlet error: ${response.message || response.error || 'Unknown error'}`);
-            }
-            
-            if (response.success !== true) {
-                throw new Error(`NetSuite RESTlet error: Unexpected response format`);
-            }
-            
-            console.log(`NetSuite response: ${response.message}`);
-            
-            const logFiles = [];
-            const logsDir = path.join(process.cwd(), 'logs');
-            
-            if (!fs.existsSync(logsDir)) {
-                fs.mkdirSync(logsDir, { recursive: true });
-                console.log('Created logs directory');
-            }
-            
-            const responseLogFiles = response.logFiles || [];
-            
-            if (responseLogFiles.length > 0) {
-                console.log(`Processing ${responseLogFiles.length} log files...`);
+            // Step 2: Process results
+            if (logFiles.length === 0) {
+                console.log('\n📝 No log files found for today');
+                console.log('This is normal if:');
+                console.log('  • No due date updates occurred today');
+                console.log('  • No penalties were calculated today'); 
+                console.log('  • No expenses were processed today');
+                console.log('  • No system errors occurred today');
                 
-                for (let i = 0; i < responseLogFiles.length; i++) {
-                    const logData = responseLogFiles[i];
-                    const fileName = logData.name || `dueDateLogs-${today}-${i + 1}.txt`;
-                    const filePath = path.join(logsDir, fileName);
-                    const content = logData.content || '';
-                    
-                    fs.writeFileSync(filePath, content, 'utf8');
-                    
-                    logFiles.push({
-                        name: fileName,
-                        path: filePath,
-                        type: logData.type || 'duedate',
-                        size: logData.size || content.length,
-                        modified: logData.modified || today,
-                        fileId: logData.fileId || null
-                    });
-                    
-                    console.log(`Saved: ${fileName} (${logData.size || content.length} bytes)`);
-                }
-            } else {
-                console.log('No Due Date log files found for today');
+                // Create a "no logs" report
+                await this.createNoLogsReport(result);
+                
+                console.log('\n✓ Daily Due Date analysis completed - no logs to analyze');
+                return;
             }
+
+            // Step 3: Analyze the log files that were downloaded
+            console.log('\nSTEP 2: Analyzing downloaded log files...');
             
-            return {
-                success: true,
-                logFiles: logFiles,
-                totalFiles: logFiles.length,
-                date: today,
-                message: response.message
+            let totalEntries = 0;
+            const analysis = {
+                duedate: 0,
+                penalty: 0, 
+                expense: 0,
+                system: 0,
+                errors: []
             };
+
+            // FIX: Now logFiles is guaranteed to be an array
+            logFiles.forEach((logFile, index) => {
+                console.log(`  Analyzing file ${index + 1}: ${logFile.name} (${logFile.type})`);
+                
+                const content = logFile.content || '';
+                const lines = content.split('\n').filter(line => line.trim().length > 0).length;
+                const type = logFile.type || 'unknown';
+                
+                console.log(`    - Type: ${type}`);
+                console.log(`    - Size: ${logFile.size || 0} bytes`);
+                console.log(`    - Lines: ${lines}`);
+                
+                analysis[type] = (analysis[type] || 0) + lines;
+                totalEntries += lines;
+                
+                // Look for errors in content
+                if (content.toLowerCase().includes('error') || 
+                    content.toLowerCase().includes('exception') ||
+                    content.toLowerCase().includes('failed')) {
+                    analysis.errors.push({
+                        file: logFile.name,
+                        type: type
+                    });
+                }
+            });
+
+            console.log('\n📊 Analysis Summary:');
+            console.log(`  Total log entries: ${totalEntries}`);
+            console.log(`  Due date entries: ${analysis.duedate}`);
+            console.log(`  Penalty entries: ${analysis.penalty}`);
+            console.log(`  Expense entries: ${analysis.expense}`);
+            console.log(`  System entries: ${analysis.system}`);
+            console.log(`  Files with errors: ${analysis.errors.length}`);
+
+            // Step 4: Save analysis report
+            await this.saveAnalysisReport(analysis, logFiles.length);
             
+            console.log('\n✓ Daily Due Date analysis completed successfully');
+
         } catch (error) {
-            console.error('Error downloading Due Date logs:', error.message);
-            throw error;
+            console.error('\n❌ Daily Due Date analysis failed:', error.message);
+            console.error('Stack trace:', error.stack);
+            
+            // Create error report
+            await this.createErrorReport(error);
+            
+            // Exit with error code
+            process.exit(1);
         }
     }
-    
-    async makeNetSuiteRequest(requestBody) {
-        const postData = JSON.stringify(requestBody);
+
+    async saveAnalysisReport(analysis, totalFiles) {
+        const errorsDir = path.join(process.cwd(), 'errors');
+        try {
+            await fs.mkdir(errorsDir, { recursive: true });
+        } catch (err) {
+            // Directory exists
+        }
+
+        const reportFile = path.join(errorsDir, `duedate-analysis-${this.today}.txt`);
         
-        console.log('Making request to:', this.config.restletUrl);
-        console.log('Request method: POST');
-        console.log('Request body size:', postData.length, 'bytes');
-        
-        // Use the same OAuth generation as your working deploy script
-        const authHeader = this.generateOAuthHeader(this.config.restletUrl, 'POST', postData);
-        console.log('OAuth header generated successfully');
-        
-        return new Promise((resolve, reject) => {
-            const options = {
-                method: 'POST',
-                headers: {
-                    'Authorization': authHeader,
-                    'Content-Type': 'application/json',
-                    'Content-Length': Buffer.byteLength(postData)
-                }
-            };
-            
-            console.log('HTTP request options configured');
-            
-            const req = https.request(this.config.restletUrl, options, (res) => {
-                let data = '';
-                
-                console.log('HTTP Response Status:', res.statusCode);
-                console.log('HTTP Response Headers:', res.headers);
-                
-                res.on('data', (chunk) => {
-                    data += chunk;
-                });
-                
-                res.on('end', () => {
-                    try {
-                        console.log('Raw response data:', data);
-                        
-                        if (!data || data.trim() === '') {
-                            reject(new Error('Empty response from NetSuite'));
-                            return;
-                        }
-                        
-                        const response = JSON.parse(data);
-                        resolve(response);
-                        
-                    } catch (parseError) {
-                        console.error('JSON parse error:', parseError.message);
-                        reject(new Error(`Failed to parse JSON response: ${parseError.message}\nResponse: ${data}`));
-                    }
-                });
+        const report = [
+            `Due Date Log Analysis Report`,
+            `Generated: ${new Date().toISOString()}`,
+            `Date: ${this.today}`,
+            ``,
+            `SUMMARY:`,
+            `========`,
+            `Total files processed: ${totalFiles}`,
+            `Total log entries: ${Object.values(analysis).reduce((sum, val) => 
+                typeof val === 'number' ? sum + val : sum, 0)}`,
+            `Due date entries: ${analysis.duedate}`,
+            `Penalty entries: ${analysis.penalty}`,
+            `Expense entries: ${analysis.expense}`,
+            `System entries: ${analysis.system}`,
+            `Files with errors: ${analysis.errors.length}`,
+            ``,
+            `STATUS: ${analysis.errors.length > 0 ? '⚠️  ERRORS FOUND' : '✅ NO ERRORS'}`,
+            ``
+        ];
+
+        if (analysis.errors.length > 0) {
+            report.push(`ERROR FILES:`);
+            report.push(`===========`);
+            analysis.errors.forEach(error => {
+                report.push(`- ${error.file} (${error.type})`);
             });
-            
-            req.on('error', (error) => {
-                console.error('HTTPS request error:', error);
-                reject(new Error(`Network error: ${error.message}`));
-            });
-            
-            req.setTimeout(30000);
-            
-            console.log('Sending request...');
-            req.write(postData);
-            req.end();
-        });
+            report.push(``);
+        }
+
+        await fs.writeFile(reportFile, report.join('\n'), 'utf8');
+        console.log(`✓ Analysis report saved: ${reportFile}`);
     }
 
-    // Test method using the same auth as your working deploy script
-    async testAuth() {
-        const baseUrl = `https://${this.config.accountId.toLowerCase().replace('_', '-')}.suitetalk.api.netsuite.com`;
-        const url = `${baseUrl}/services/rest/record/v1/metadata-catalog`;
-        const authHeader = this.generateOAuthHeader(url, 'GET');
+    async createNoLogsReport(result) {
+        const errorsDir = path.join(process.cwd(), 'errors');
+        try {
+            await fs.mkdir(errorsDir, { recursive: true });
+        } catch (err) {
+            // Directory exists
+        }
 
-        return new Promise((resolve, reject) => {
-            const options = {
-                method: 'GET',
-                headers: {
-                    'Authorization': authHeader,
-                    'Content-Type': 'application/json'
-                }
-            };
+        const reportFile = path.join(errorsDir, `duedate-no-logs-${this.today}.txt`);
+        
+        const report = [
+            `Due Date Log Analysis - No Logs Found`,
+            `Generated: ${new Date().toISOString()}`,
+            `Date: ${this.today}`,
+            ``,
+            `RESULT:`,
+            `=======`,
+            `No log files were found for ${this.today}`,
+            ``,
+            `NetSuite Response:`,
+            `Success: ${result.success}`,
+            `Message: ${result.message}`,
+            `Timestamp: ${result.timestamp}`,
+            `Total Files: ${result.totalFiles || 0}`,
+            ``,
+            `This is normal if no due date processing occurred today.`,
+            ``
+        ];
 
-            console.log('Testing authentication with metadata-catalog...');
+        await fs.writeFile(reportFile, report.join('\n'), 'utf8');
+        console.log(`✓ No-logs report saved: ${reportFile}`);
+    }
 
-            const req = https.request(url, options, res => {
-                let data = '';
-                res.on('data', chunk => data += chunk);
-                res.on('end', () => {
-                    console.log(`Auth test response: HTTP ${res.statusCode}`);
-                    if (res.statusCode === 200) {
-                        console.log('✓ Authentication successful');
-                        resolve(true);
-                    } else {
-                        console.log(`✗ Authentication failed: HTTP ${res.statusCode} - ${data}`);
-                        resolve(false);
-                    }
-                });
-            });
+    async createErrorReport(error) {
+        const errorsDir = path.join(process.cwd(), 'errors');
+        try {
+            await fs.mkdir(errorsDir, { recursive: true });
+        } catch (err) {
+            // Directory exists
+        }
 
-            req.on('error', (error) => {
-                console.error('Auth test error:', error.message);
-                resolve(false);
-            });
-            
-            req.end();
-        });
+        const errorFile = path.join(errorsDir, `duedate-system-error-${this.today}.txt`);
+        
+        const report = [
+            `Due Date Analysis System Error`,
+            `Generated: ${new Date().toISOString()}`,
+            `Date: ${this.today}`,
+            ``,
+            `ERROR DETAILS:`,
+            `=============`,
+            `Message: ${error.message}`,
+            ``,
+            `Stack Trace:`,
+            `${error.stack || 'No stack trace available'}`,
+            ``,
+            `Configuration Check:`,
+            `Account ID: ${this.config.accountId ? '✓ Present' : '❌ Missing'}`,
+            `Consumer Key: ${this.config.consumerKey ? '✓ Present' : '❌ Missing'}`,
+            `Token ID: ${this.config.tokenId ? '✓ Present' : '❌ Missing'}`,
+            `RESTlet URL: ${this.config.restletUrl ? '✓ Present' : '❌ Missing'}`,
+            ``
+        ];
+
+        await fs.writeFile(errorFile, report.join('\n'), 'utf8');
+        console.log(`Created system error report: ${errorFile}`);
     }
 }
 
-module.exports = { NetSuiteDownloader };
+// Run the analysis
+async function main() {
+    const analyzer = new DueDateLogAnalyzer();
+    await analyzer.runDailyAnalysis();
+}
+
+if (require.main === module) {
+    main().catch(console.error);
+}
+
+module.exports = DueDateLogAnalyzer;
