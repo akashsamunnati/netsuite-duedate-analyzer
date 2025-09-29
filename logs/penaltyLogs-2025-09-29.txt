@@ -1,6 +1,6 @@
 PENALTY SYSTEM LOGS FOR 2025-09-29
-Generated: 2025-09-29T13:24:03.334Z
-Total Entries: 62
+Generated: 2025-09-29T17:01:07.437Z
+Total Entries: 66
 ==================================================
 
 Entry 1:
@@ -28,348 +28,372 @@ Title: getPenaltyLogs error
 ------------------------------
 
 Entry 5:
+Date: 29/9/2025 10:31 pm
+Type: Debug
+Title: Getting Penalty logs
+------------------------------
+
+Entry 6:
 Date: 29/9/2025 6:30 pm
 Type: Debug
 Title: Updating existing bill payment map record
 ------------------------------
 
-Entry 6:
+Entry 7:
 Date: 29/9/2025 6:39 pm
 Type: Debug
 Title: Current bill payment record id: 5324860
 ------------------------------
 
-Entry 7:
+Entry 8:
 Date: 29/9/2025 6:42 pm
 Type: Debug
 Title: Found existing bill payment map record
 ------------------------------
 
-Entry 8:
+Entry 9:
 Date: 29/9/2025 6:18 pm
 Type: Debug
 Title: Getting Penalty logs
 ------------------------------
 
-Entry 9:
+Entry 10:
 Date: 29/9/2025 6:42 pm
 Type: Debug
 Title: Final penaltyAssessType
 ------------------------------
 
-Entry 10:
+Entry 11:
 Date: 29/9/2025 6:44 pm
 Type: Error
 Title: getPenaltyLogs error
 ------------------------------
 
-Entry 11:
+Entry 12:
 Date: 29/9/2025 6:54 pm
 Type: Debug
 Title: Getting Penalty logs
 ------------------------------
 
-Entry 12:
+Entry 13:
 Date: 29/9/2025 10:12 am
 Type: Debug
 Title: Current bill payment record id: 5331724
 ------------------------------
 
-Entry 13:
-Date: 29/9/2025 6:24 pm
-Type: Debug
-Title: Current bill payment record id: 5328073
-------------------------------
-
 Entry 14:
-Date: 29/9/2025 6:25 pm
+Date: 29/9/2025 6:24 pm
 Type: Debug
 Title: Current bill payment record id: 5328073
 ------------------------------
 
 Entry 15:
-Date: 29/9/2025 6:29 pm
+Date: 29/9/2025 6:25 pm
 Type: Debug
 Title: Current bill payment record id: 5328073
 ------------------------------
 
 Entry 16:
-Date: 29/9/2025 6:40 pm
+Date: 29/9/2025 6:29 pm
 Type: Debug
-Title: Updated Bill Payment Map Record
+Title: Current bill payment record id: 5328073
 ------------------------------
 
 Entry 17:
-Date: 29/9/2025 6:43 pm
+Date: 29/9/2025 6:40 pm
 Type: Debug
 Title: Updated Bill Payment Map Record
 ------------------------------
 
 Entry 18:
+Date: 29/9/2025 6:43 pm
+Type: Debug
+Title: Updated Bill Payment Map Record
+------------------------------
+
+Entry 19:
 Date: 29/9/2025 2:52 am
 Type: Debug
 Title: Getting Penalty logs
 ------------------------------
 
-Entry 19:
-Date: 29/9/2025 10:12 am
-Type: Debug
-Title: Updated Bill Payment Map Record
-------------------------------
-
 Entry 20:
-Date: 29/9/2025 10:12 am
+Date: 29/9/2025 6:54 pm
 Type: Debug
-Title: Updated Bill Payment Map Record
+Title: Penalty logs added
 ------------------------------
 
 Entry 21:
-Date: 29/9/2025 6:39 pm
+Date: 29/9/2025 10:12 am
 Type: Debug
 Title: Updated Bill Payment Map Record
 ------------------------------
 
 Entry 22:
-Date: 29/9/2025 6:43 pm
+Date: 29/9/2025 10:12 am
 Type: Debug
 Title: Updated Bill Payment Map Record
 ------------------------------
 
 Entry 23:
+Date: 29/9/2025 6:39 pm
+Type: Debug
+Title: Updated Bill Payment Map Record
+------------------------------
+
+Entry 24:
+Date: 29/9/2025 6:43 pm
+Type: Debug
+Title: Updated Bill Payment Map Record
+------------------------------
+
+Entry 25:
 Date: 29/9/2025 6:05 pm
 Type: Debug
 Title: Getting Penalty logs
 ------------------------------
 
-Entry 24:
+Entry 26:
 Date: 29/9/2025 6:05 pm
 Type: Error
 Title: getPenaltyLogs error
 ------------------------------
 
-Entry 25:
+Entry 27:
 Date: 29/9/2025 10:12 am
 Type: Debug
 Title: Updated Bill Payment Map Record
 ------------------------------
 
-Entry 26:
+Entry 28:
 Date: 29/9/2025 6:24 pm
 Type: Debug
 Title: Updated Bill Payment Map Record
 ------------------------------
 
-Entry 27:
+Entry 29:
 Date: 29/9/2025 6:28 pm
 Type: Debug
 Title: Current bill payment record id:
 ------------------------------
 
-Entry 28:
+Entry 30:
 Date: 29/9/2025 6:39 pm
 Type: Debug
 Title: Current bill payment record id:
 ------------------------------
 
-Entry 29:
+Entry 31:
+Date: 29/9/2025 6:59 pm
+Type: Debug
+Title: Getting Penalty logs
+------------------------------
+
+Entry 32:
 Date: 29/9/2025 6:24 pm
 Type: Debug
 Title: Updating existing bill payment map record
 ------------------------------
 
-Entry 30:
+Entry 33:
 Date: 29/9/2025 6:30 pm
 Type: Debug
 Title: Found existing bill payment map record
 ------------------------------
 
-Entry 31:
+Entry 34:
 Date: 29/9/2025 6:30 pm
 Type: Debug
 Title: Current bill payment record id: 5328073
 ------------------------------
 
-Entry 32:
+Entry 35:
 Date: 29/9/2025 6:30 pm
 Type: Debug
 Title: Updated Bill Payment Map Record
 ------------------------------
 
-Entry 33:
+Entry 36:
 Date: 29/9/2025 6:40 pm
 Type: Debug
 Title: Updated Bill Payment Map Record
 ------------------------------
 
-Entry 34:
+Entry 37:
 Date: 29/9/2025 6:43 pm
 Type: Debug
 Title: Updated Bill Payment Map Record
 ------------------------------
 
-Entry 35:
+Entry 38:
 Date: 29/9/2025 2:52 am
 Type: Error
 Title: getPenaltyLogs error
 ------------------------------
 
-Entry 36:
+Entry 39:
 Date: 29/9/2025 6:36 pm
 Type: Error
 Title: getPenaltyLogs error
 ------------------------------
 
-Entry 37:
+Entry 40:
 Date: 29/9/2025 6:42 pm
 Type: Debug
 Title: Penalty Assessment
 ------------------------------
 
-Entry 38:
+Entry 41:
 Date: 29/9/2025 6:24 pm
 Type: Debug
 Title: Current bill payment record id:
 ------------------------------
 
-Entry 39:
+Entry 42:
 Date: 29/9/2025 6:24 pm
 Type: Debug
 Title: Current bill payment record id:
 ------------------------------
 
-Entry 40:
+Entry 43:
 Date: 29/9/2025 6:24 pm
 Type: Debug
 Title: Found existing bill payment map record
 ------------------------------
 
-Entry 41:
+Entry 44:
 Date: 29/9/2025 6:30 pm
 Type: Debug
 Title: Updated Bill Payment Map Record
 ------------------------------
 
-Entry 42:
+Entry 45:
 Date: 29/9/2025 6:39 pm
 Type: Debug
 Title: Updated Bill Payment Map Record
 ------------------------------
 
-Entry 43:
+Entry 46:
 Date: 29/9/2025 6:39 pm
 Type: Debug
 Title: Current bill payment record id:
 ------------------------------
 
-Entry 44:
+Entry 47:
 Date: 29/9/2025 6:40 pm
 Type: Debug
 Title: Current bill payment record id: 5324860
 ------------------------------
 
-Entry 45:
+Entry 48:
 Date: 29/9/2025 6:42 pm
 Type: Debug
 Title: Current bill payment record id:
 ------------------------------
 
-Entry 46:
+Entry 49:
 Date: 29/9/2025 6:43 pm
 Type: Debug
 Title: Current bill payment record id: 5324860
 ------------------------------
 
-Entry 47:
-Date: 29/9/2025 2:40 am
-Type: Debug
-Title: Getting Penalty logs
-------------------------------
-
-Entry 48:
-Date: 29/9/2025 2:40 am
-Type: Error
-Title: getPenaltyLogs error
-------------------------------
-
-Entry 49:
-Date: 29/9/2025 6:09 pm
-Type: Debug
-Title: Getting Penalty logs
-------------------------------
-
 Entry 50:
-Date: 29/9/2025 6:09 pm
-Type: Error
-Title: getPenaltyLogs error
+Date: 29/9/2025 2:40 am
+Type: Debug
+Title: Getting Penalty logs
 ------------------------------
 
 Entry 51:
-Date: 29/9/2025 6:18 pm
+Date: 29/9/2025 2:40 am
 Type: Error
 Title: getPenaltyLogs error
 ------------------------------
 
 Entry 52:
-Date: 29/9/2025 6:36 pm
+Date: 29/9/2025 6:09 pm
 Type: Debug
 Title: Getting Penalty logs
 ------------------------------
 
 Entry 53:
-Date: 29/9/2025 10:12 am
-Type: Debug
-Title: Current bill payment record id:
+Date: 29/9/2025 6:09 pm
+Type: Error
+Title: getPenaltyLogs error
 ------------------------------
 
 Entry 54:
-Date: 29/9/2025 6:25 pm
-Type: Debug
-Title: Updated Bill Payment Map Record
+Date: 29/9/2025 6:18 pm
+Type: Error
+Title: getPenaltyLogs error
 ------------------------------
 
 Entry 55:
-Date: 29/9/2025 6:44 pm
+Date: 29/9/2025 6:36 pm
 Type: Debug
 Title: Getting Penalty logs
 ------------------------------
 
 Entry 56:
-Date: 29/9/2025 6:24 pm
+Date: 29/9/2025 10:12 am
 Type: Debug
-Title: Current bill payment record id: 5328073
+Title: Current bill payment record id:
 ------------------------------
 
 Entry 57:
-Date: 29/9/2025 6:24 pm
+Date: 29/9/2025 6:25 pm
 Type: Debug
 Title: Updated Bill Payment Map Record
 ------------------------------
 
 Entry 58:
-Date: 29/9/2025 6:24 pm
+Date: 29/9/2025 6:44 pm
 Type: Debug
-Title: Current bill payment record id:
+Title: Getting Penalty logs
 ------------------------------
 
 Entry 59:
-Date: 29/9/2025 6:30 pm
-Type: Debug
-Title: Current bill payment record id:
+Date: 29/9/2025 6:59 pm
+Type: Error
+Title: getPenaltyLogs error
 ------------------------------
 
 Entry 60:
-Date: 29/9/2025 6:39 pm
+Date: 29/9/2025 6:24 pm
 Type: Debug
-Title: Updated Bill Payment Map Record
+Title: Current bill payment record id: 5328073
 ------------------------------
 
 Entry 61:
-Date: 29/9/2025 6:40 pm
+Date: 29/9/2025 6:24 pm
 Type: Debug
 Title: Updated Bill Payment Map Record
 ------------------------------
 
 Entry 62:
+Date: 29/9/2025 6:24 pm
+Type: Debug
+Title: Current bill payment record id:
+------------------------------
+
+Entry 63:
+Date: 29/9/2025 6:30 pm
+Type: Debug
+Title: Current bill payment record id:
+------------------------------
+
+Entry 64:
+Date: 29/9/2025 6:39 pm
+Type: Debug
+Title: Updated Bill Payment Map Record
+------------------------------
+
+Entry 65:
+Date: 29/9/2025 6:40 pm
+Type: Debug
+Title: Updated Bill Payment Map Record
+------------------------------
+
+Entry 66:
 Date: 29/9/2025 6:42 pm
 Type: Debug
 Title: Updating existing bill payment map record

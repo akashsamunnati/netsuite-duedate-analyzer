@@ -1,6 +1,6 @@
 SYSTEM ERROR LOGS FOR 2025-09-29
-Generated: 2025-09-29T13:24:03.368Z
-Total Entries: 36
+Generated: 2025-09-29T17:01:07.487Z
+Total Entries: 40
 ==================================================
 
 Entry 1:
@@ -215,6 +215,30 @@ Title: getExpenseLogs error
 
 Entry 36:
 Date: 29/9/2025 6:44 pm
+Type: Error
+Title: getSystemErrorLogs error
+------------------------------
+
+Entry 37:
+Date: 29/9/2025 6:59 pm
+Type: Error
+Title: getDueDateLogs error
+------------------------------
+
+Entry 38:
+Date: 29/9/2025 6:59 pm
+Type: Error
+Title: getPenaltyLogs error
+------------------------------
+
+Entry 39:
+Date: 29/9/2025 6:59 pm
+Type: Error
+Title: getExpenseLogs error
+------------------------------
+
+Entry 40:
+Date: 29/9/2025 6:59 pm
 Type: Error
 Title: getSystemErrorLogs error
 ------------------------------
