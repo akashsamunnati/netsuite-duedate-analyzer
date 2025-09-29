@@ -14,6 +14,9 @@ jobs:
   analyze-duedate-logs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: write
+      actions: read
     
     steps:
       - name: Checkout Repository
