@@ -1,0 +1,119 @@
+EXPENSE SYSTEM LOGS FOR 2025-09-29
+Generated: 2025-09-29T13:24:03.354Z
+Total Entries: 19
+==================================================
+
+Entry 1:
+Date: 29/9/2025 2:40 am
+Type: Debug
+Title: Getting Expense logs
+------------------------------
+
+Entry 2:
+Date: 29/9/2025 2:40 am
+Type: Error
+Title: getExpenseLogs error
+------------------------------
+
+Entry 3:
+Date: 29/9/2025 2:48 am
+Type: Debug
+Title: Getting Expense logs
+------------------------------
+
+Entry 4:
+Date: 29/9/2025 2:48 am
+Type: Error
+Title: getExpenseLogs error
+------------------------------
+
+Entry 5:
+Date: 29/9/2025 2:52 am
+Type: Debug
+Title: Getting Expense logs
+------------------------------
+
+Entry 6:
+Date: 29/9/2025 2:52 am
+Type: Error
+Title: getExpenseLogs error
+------------------------------
+
+Entry 7:
+Date: 29/9/2025 5:49 pm
+Type: Debug
+Title: Getting Expense logs
+------------------------------
+
+Entry 8:
+Date: 29/9/2025 5:49 pm
+Type: Error
+Title: getExpenseLogs error
+------------------------------
+
+Entry 9:
+Date: 29/9/2025 6:05 pm
+Type: Debug
+Title: Getting Expense logs
+------------------------------
+
+Entry 10:
+Date: 29/9/2025 6:05 pm
+Type: Error
+Title: getExpenseLogs error
+------------------------------
+
+Entry 11:
+Date: 29/9/2025 6:09 pm
+Type: Debug
+Title: Getting Expense logs
+------------------------------
+
+Entry 12:
+Date: 29/9/2025 6:09 pm
+Type: Error
+Title: getExpenseLogs error
+------------------------------
+
+Entry 13:
+Date: 29/9/2025 6:18 pm
+Type: Debug
+Title: Getting Expense logs
+------------------------------
+
+Entry 14:
+Date: 29/9/2025 6:18 pm
+Type: Error
+Title: getExpenseLogs error
+------------------------------
+
+Entry 15:
+Date: 29/9/2025 6:36 pm
+Type: Debug
+Title: Getting Expense logs
+------------------------------
+
+Entry 16:
+Date: 29/9/2025 6:36 pm
+Type: Error
+Title: getExpenseLogs error
+------------------------------
+
+Entry 17:
+Date: 29/9/2025 6:44 pm
+Type: Debug
+Title: Getting Expense logs
+------------------------------
+
+Entry 18:
+Date: 29/9/2025 6:44 pm
+Type: Error
+Title: getExpenseLogs error
+------------------------------
+
+Entry 19:
+Date: 29/9/2025 6:54 pm
+Type: Debug
+Title: Getting Expense logs
+------------------------------
+

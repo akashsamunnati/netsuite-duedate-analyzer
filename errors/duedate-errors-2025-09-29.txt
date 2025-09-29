@@ -1,7 +1,7 @@
 DUE DATE LOG ERROR REPORT
-Generated: 2025-09-29T13:14:16.916Z
+Generated: 2025-09-29T13:24:03.827Z
 Date: 2025-09-29
-Source File: dueDateLogs-2025-09-29.txt
+Source File: systemLogs-2025-09-29.txt
 Status: AI ANALYSIS FAILED
 
 ==============================================
@@ -19,7 +19,7 @@ Reason: Gemini API error: 404 - {
 
 
 MANUAL REVIEW REQUIRED:
-Please manually review the Due Date log file: dueDateLogs-2025-09-29.txt
+Please manually review the Due Date log file: systemLogs-2025-09-29.txt
 
 This could indicate:
 - API rate limits exceeded

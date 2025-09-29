@@ -1,14 +1,29 @@
 DAILY DUE DATE ANALYSIS SUMMARY
 Date: 2025-09-29
-Generated: 2025-09-29T13:14:16.916Z
+Generated: 2025-09-29T13:24:03.827Z
 Analysis Tool: GitHub Actions - NetSuite Due Date Log Analyzer
 
 ==============================================
 OVERVIEW:
 ==============================================
 
-Total Log Files Analyzed: 1
+Total Log Files Analyzed: 4
 Total Errors Found: 0
+
+Due Date System:
+  Status: NORMAL
+  Errors Found: 0
+  Report File: duedate-errors-2025-09-29.txt
+
+Due Date System:
+  Status: NORMAL
+  Errors Found: 0
+  Report File: duedate-errors-2025-09-29.txt
+
+Due Date System:
+  Status: NORMAL
+  Errors Found: 0
+  Report File: duedate-errors-2025-09-29.txt
 
 Due Date System:
   Status: NORMAL
@@ -35,6 +50,9 @@ No errors detected in today's operations.
 FILES CREATED:
 ==============================================
 
+- duedate-errors-2025-09-29.txt
+- duedate-errors-2025-09-29.txt
+- duedate-errors-2025-09-29.txt
 - duedate-errors-2025-09-29.txt
 
 ==============================================

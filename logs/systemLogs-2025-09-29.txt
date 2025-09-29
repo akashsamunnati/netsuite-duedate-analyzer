@@ -1,0 +1,221 @@
+SYSTEM ERROR LOGS FOR 2025-09-29
+Generated: 2025-09-29T13:24:03.368Z
+Total Entries: 36
+==================================================
+
+Entry 1:
+Date: 29/9/2025 2:40 am
+Type: Error
+Title: getDueDateLogs error
+------------------------------
+
+Entry 2:
+Date: 29/9/2025 2:40 am
+Type: Error
+Title: getPenaltyLogs error
+------------------------------
+
+Entry 3:
+Date: 29/9/2025 2:40 am
+Type: Error
+Title: getExpenseLogs error
+------------------------------
+
+Entry 4:
+Date: 29/9/2025 2:40 am
+Type: Error
+Title: getSystemErrorLogs error
+------------------------------
+
+Entry 5:
+Date: 29/9/2025 2:48 am
+Type: Error
+Title: getDueDateLogs error
+------------------------------
+
+Entry 6:
+Date: 29/9/2025 2:48 am
+Type: Error
+Title: getPenaltyLogs error
+------------------------------
+
+Entry 7:
+Date: 29/9/2025 2:48 am
+Type: Error
+Title: getExpenseLogs error
+------------------------------
+
+Entry 8:
+Date: 29/9/2025 2:48 am
+Type: Error
+Title: getSystemErrorLogs error
+------------------------------
+
+Entry 9:
+Date: 29/9/2025 2:52 am
+Type: Error
+Title: getDueDateLogs error
+------------------------------
+
+Entry 10:
+Date: 29/9/2025 2:52 am
+Type: Error
+Title: getPenaltyLogs error
+------------------------------
+
+Entry 11:
+Date: 29/9/2025 2:52 am
+Type: Error
+Title: getExpenseLogs error
+------------------------------
+
+Entry 12:
+Date: 29/9/2025 2:52 am
+Type: Error
+Title: getSystemErrorLogs error
+------------------------------
+
+Entry 13:
+Date: 29/9/2025 5:49 pm
+Type: Error
+Title: getDueDateLogs error
+------------------------------
+
+Entry 14:
+Date: 29/9/2025 5:49 pm
+Type: Error
+Title: getPenaltyLogs error
+------------------------------
+
+Entry 15:
+Date: 29/9/2025 5:49 pm
+Type: Error
+Title: getExpenseLogs error
+------------------------------
+
+Entry 16:
+Date: 29/9/2025 5:49 pm
+Type: Error
+Title: getSystemErrorLogs error
+------------------------------
+
+Entry 17:
+Date: 29/9/2025 6:05 pm
+Type: Error
+Title: getDueDateLogs error
+------------------------------
+
+Entry 18:
+Date: 29/9/2025 6:05 pm
+Type: Error
+Title: getPenaltyLogs error
+------------------------------
+
+Entry 19:
+Date: 29/9/2025 6:05 pm
+Type: Error
+Title: getExpenseLogs error
+------------------------------
+
+Entry 20:
+Date: 29/9/2025 6:05 pm
+Type: Error
+Title: getSystemErrorLogs error
+------------------------------
+
+Entry 21:
+Date: 29/9/2025 6:09 pm
+Type: Error
+Title: getDueDateLogs error
+------------------------------
+
+Entry 22:
+Date: 29/9/2025 6:09 pm
+Type: Error
+Title: getPenaltyLogs error
+------------------------------
+
+Entry 23:
+Date: 29/9/2025 6:09 pm
+Type: Error
+Title: getExpenseLogs error
+------------------------------
+
+Entry 24:
+Date: 29/9/2025 6:09 pm
+Type: Error
+Title: getSystemErrorLogs error
+------------------------------
+
+Entry 25:
+Date: 29/9/2025 6:18 pm
+Type: Error
+Title: filterLogsByDate error
+------------------------------
+
+Entry 26:
+Date: 29/9/2025 6:18 pm
+Type: Error
+Title: getPenaltyLogs error
+------------------------------
+
+Entry 27:
+Date: 29/9/2025 6:18 pm
+Type: Error
+Title: getExpenseLogs error
+------------------------------
+
+Entry 28:
+Date: 29/9/2025 6:18 pm
+Type: Error
+Title: getSystemErrorLogs error
+------------------------------
+
+Entry 29:
+Date: 29/9/2025 6:36 pm
+Type: Error
+Title: filterLogsByDate error
+------------------------------
+
+Entry 30:
+Date: 29/9/2025 6:36 pm
+Type: Error
+Title: getPenaltyLogs error
+------------------------------
+
+Entry 31:
+Date: 29/9/2025 6:36 pm
+Type: Error
+Title: getExpenseLogs error
+------------------------------
+
+Entry 32:
+Date: 29/9/2025 6:36 pm
+Type: Error
+Title: getSystemErrorLogs error
+------------------------------
+
+Entry 33:
+Date: 29/9/2025 6:44 pm
+Type: Error
+Title: filterLogsByDate error
+------------------------------
+
+Entry 34:
+Date: 29/9/2025 6:44 pm
+Type: Error
+Title: getPenaltyLogs error
+------------------------------
+
+Entry 35:
+Date: 29/9/2025 6:44 pm
+Type: Error
+Title: getExpenseLogs error
+------------------------------
+
+Entry 36:
+Date: 29/9/2025 6:44 pm
+Type: Error
+Title: getSystemErrorLogs error
+------------------------------
+
