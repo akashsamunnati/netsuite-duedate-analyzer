@@ -53264,3 +53264,273 @@ Earliest UTR Date: 15/9/2025 (Changed: NO)
 [2025-09-29 13:00:48.801] Script Ended successfully with the parameters:
 billPayId: 5328073, billPaymentAmount: 1048640.12, utrGeneratedDate: 15/9/2025
 iterationNo: 0, billId: 5327852, invoiceId: 5327448
+[2025-09-29 13:09:01.301] 
+============================================================
+[2025-09-29 13:09:01.303] DUE DATE UPDATE SCRIPT EXECUTION
+[2025-09-29 13:09:01.306] Timestamp: 2025-09-29 13:09:01 UTC
+[2025-09-29 13:09:01.307] ============================================================
+
+[2025-09-29 13:09:01.309] Bill Payment ID: 5324860
+[2025-09-29 13:09:01.311] Script triggered by: view
+[2025-09-29 13:09:01.312] User: System
+
+[2025-09-29 13:09:01.418] Bill payment record loaded successfully. Type: vendorpayment, ID: 5324860
+[2025-09-29 13:09:01.421] Bill payment amount retrieved: 200
+[2025-09-29 13:09:01.430] Payment details - Items Count: 1, Payment Status: Confirmed, Payment Method: 7, UTR Date: 10/8/2025
+[2025-09-29 13:09:01.431] CONDITION MET: UTR date exists and payment method is 7 (Sambitron) - Entering UTR Flow
+[2025-09-29 13:09:01.434] 
+--- Processing Apply Item 1 of 1 ---
+[2025-09-29 13:09:01.439] Processing item 0: Apply=true, Transaction Type=VendBill
+[2025-09-29 13:09:01.441] Bill ID retrieved: 5296114 for iteration 0
+[2025-09-29 13:09:01.450] Bill form check: 219 (should not be 338)
+[2025-09-29 13:09:01.892] Invoice ID retrieved: 5296021 from bill 5296114
+[2025-09-29 13:09:02.407] Installment Number: 2, Sales Order ID: 5296009
+[2025-09-29 13:09:02.411] Payment confirmed - proceeding with due date updates for Bill: 5296114, Invoice: 5296021
+[2025-09-29 13:09:03.003] Bill 5296114 updated with supplier payment date: 10/8/2025
+[2025-09-29 13:09:03.474] Transaction origin: Supplier Originated, Repayment select: 2
+[2025-09-29 13:09:03.481] OVERRIDE: Using supplier payment days (10) instead of installment days (10)
+[2025-09-29 13:09:03.484] Processing installment 0: Milestone="On Supplier Payment", Days to add=10
+[2025-09-29 13:09:03.486] 
+=== SIMPLE UTR DATE CHECK ===
+[2025-09-29 13:09:03.487] Invoice: 5296021
+[2025-09-29 13:09:03.489] Current UTR: 10/8/2025
+[2025-09-29 13:09:03.495] AP Bill ID: 5296114
+[2025-09-29 13:09:03.497] Searching for all payments to debug status values...
+[2025-09-29 13:09:03.504] Found 1 payments total (before status filtering)
+[2025-09-29 13:09:03.506] Payment 5324860: Status Text='Confirmed', Status Value='confirmed'
+[2025-09-29 13:09:03.508] ??? Payment 5324860 is confirmed
+[2025-09-29 13:09:03.509] After manual status filtering: 1 confirmed payments
+[2025-09-29 13:09:03.511] Payment 5324860 (Confirmed): UTR 10/8/2025
+[2025-09-29 13:09:03.513] 
+[2025-09-29 13:09:03.514] 
+Earliest UTR Date: 10/8/2025 (Changed: NO)
+[2025-09-29 13:09:03.516] === END UTR DATE CHECK ===
+
+[2025-09-29 13:09:03.523] Original calculated due date stored (UTR): 20/8/2025
+[2025-09-29 13:09:03.533] Holiday check for date 20/8/2025: Not Holiday
+[2025-09-29 13:09:03.539] Due date calculated: Original=20/8/2025, Adjusted=20/8/2025
+[2025-09-29 13:09:03.541] 
+*** SUPPLIER ORIGINATED FLOW ***
+[2025-09-29 13:09:03.544] Supplier originated flow - Grace period: 0 days
+[2025-09-29 13:09:03.546] BEFORE calling getEarliestUtrDate:
+[2025-09-29 13:09:03.547] - Invoice ID: 5296021
+[2025-09-29 13:09:03.549] - Current Bill Payment ID: 5324860
+[2025-09-29 13:09:03.551] - Current UTR Date: 10/8/2025
+[2025-09-29 13:09:03.552] 
+=== SIMPLE UTR DATE CHECK ===
+[2025-09-29 13:09:03.554] Invoice: 5296021
+[2025-09-29 13:09:03.556] Current UTR: 10/8/2025
+[2025-09-29 13:09:03.563] AP Bill ID: 5296114
+[2025-09-29 13:09:03.564] Searching for all payments to debug status values...
+[2025-09-29 13:09:03.575] Found 1 payments total (before status filtering)
+[2025-09-29 13:09:03.577] Payment 5324860: Status Text='Confirmed', Status Value='confirmed'
+[2025-09-29 13:09:03.578] ??? Payment 5324860 is confirmed
+[2025-09-29 13:09:03.580] After manual status filtering: 1 confirmed payments
+[2025-09-29 13:09:03.582] Payment 5324860 (Confirmed): UTR 10/8/2025
+[2025-09-29 13:09:03.583] 
+[2025-09-29 13:09:03.585] 
+Earliest UTR Date: 10/8/2025 (Changed: NO)
+[2025-09-29 13:09:03.587] === END UTR DATE CHECK ===
+
+[2025-09-29 13:09:03.589] AFTER calling getEarliestUtrDate:
+[2025-09-29 13:09:03.591] - Returned Date: 10/8/2025
+[2025-09-29 13:09:03.592] - Is Same as Input: YES
+[2025-09-29 13:09:03.594] BEFORE calling getEarliestUtrDate:
+[2025-09-29 13:09:03.596] - Invoice ID: 5296021
+[2025-09-29 13:09:03.598] - Current Bill Payment ID: 5324860
+[2025-09-29 13:09:03.599] - Current UTR Date: 10/8/2025
+[2025-09-29 13:09:03.601] AFTER calling getEarliestUtrDate:
+[2025-09-29 13:09:03.603] - Returned Date: 10/8/2025
+[2025-09-29 13:09:03.604] - Is Same as Input: YES
+[2025-09-29 13:09:03.630] Due date criteria set to: 1
+[2025-09-29 13:09:05.186] SCRIPT ERROR:
+Bill Payment ID: 5324860
+Error Name: CANNOT_CHANGE_INVOICE_PAID_INSTALLMENTS
+Error Message: After a payment is applied to an installment, you cannot change the Due Date field nor the Amount field.
+Parameters Used: billPayId: 5324860, billPaymentAmount: 200, utrGeneratedDate: 10/8/2025
+iterationNo: 0, billId: 5296114, invoiceId: 5296021
+Stack: Error
+    at RecordInvoker.save (suitescript/resources/javascript/record/serverRecordService.js:371:13)
+    at NetSuiteObject.thenableFunction() (suitescript/resources/javascript/record/proxy.js:115:24)
+    at Object.updateDueDate (/SuiteScripts/updateDueDateSS-V2.js:1155:55)
+
+[2025-09-29 13:09:16.793] 
+============================================================
+[2025-09-29 13:09:16.795] DUE DATE UPDATE SCRIPT EXECUTION
+[2025-09-29 13:09:16.796] Timestamp: 2025-09-29 13:09:16 UTC
+[2025-09-29 13:09:16.798] ============================================================
+
+[2025-09-29 13:09:16.800] Bill Payment ID: 5324860
+[2025-09-29 13:09:16.801] Script triggered by: edit
+[2025-09-29 13:09:16.803] User: System
+
+[2025-09-29 13:09:16.913] Bill payment record loaded successfully. Type: vendorpayment, ID: 5324860
+[2025-09-29 13:09:16.917] Bill payment amount retrieved: 200
+[2025-09-29 13:09:16.924] Payment details - Items Count: 1, Payment Status: Confirmed, Payment Method: 7, UTR Date: 10/8/2025
+[2025-09-29 13:09:16.926] CONDITION MET: UTR date exists and payment method is 7 (Sambitron) - Entering UTR Flow
+[2025-09-29 13:09:16.932] 
+--- Processing Apply Item 1 of 1 ---
+[2025-09-29 13:09:16.937] Processing item 0: Apply=true, Transaction Type=VendBill
+[2025-09-29 13:09:16.939] Bill ID retrieved: 5296114 for iteration 0
+[2025-09-29 13:09:16.949] Bill form check: 219 (should not be 338)
+[2025-09-29 13:09:17.397] Invoice ID retrieved: 5296021 from bill 5296114
+[2025-09-29 13:09:17.814] Installment Number: 2, Sales Order ID: 5296009
+[2025-09-29 13:09:17.818] Payment confirmed - proceeding with due date updates for Bill: 5296114, Invoice: 5296021
+[2025-09-29 13:09:18.400] Bill 5296114 updated with supplier payment date: 10/8/2025
+[2025-09-29 13:09:18.864] Transaction origin: Supplier Originated, Repayment select: 2
+[2025-09-29 13:09:18.870] OVERRIDE: Using supplier payment days (10) instead of installment days (10)
+[2025-09-29 13:09:18.873] Processing installment 0: Milestone="On Supplier Payment", Days to add=10
+[2025-09-29 13:09:18.875] 
+=== SIMPLE UTR DATE CHECK ===
+[2025-09-29 13:09:18.876] Invoice: 5296021
+[2025-09-29 13:09:18.878] Current UTR: 10/8/2025
+[2025-09-29 13:09:18.885] AP Bill ID: 5296114
+[2025-09-29 13:09:18.887] Searching for all payments to debug status values...
+[2025-09-29 13:09:18.894] Found 1 payments total (before status filtering)
+[2025-09-29 13:09:18.895] Payment 5324860: Status Text='Confirmed', Status Value='confirmed'
+[2025-09-29 13:09:18.897] ??? Payment 5324860 is confirmed
+[2025-09-29 13:09:18.898] After manual status filtering: 1 confirmed payments
+[2025-09-29 13:09:18.900] Payment 5324860 (Confirmed): UTR 10/8/2025
+[2025-09-29 13:09:18.902] 
+[2025-09-29 13:09:18.903] 
+Earliest UTR Date: 10/8/2025 (Changed: NO)
+[2025-09-29 13:09:18.905] === END UTR DATE CHECK ===
+
+[2025-09-29 13:09:18.918] Original calculated due date stored (UTR): 20/8/2025
+[2025-09-29 13:09:18.923] Holiday check for date 20/8/2025: Not Holiday
+[2025-09-29 13:09:18.928] Due date calculated: Original=20/8/2025, Adjusted=20/8/2025
+[2025-09-29 13:09:18.930] 
+*** SUPPLIER ORIGINATED FLOW ***
+[2025-09-29 13:09:18.933] Supplier originated flow - Grace period: 0 days
+[2025-09-29 13:09:18.935] BEFORE calling getEarliestUtrDate:
+[2025-09-29 13:09:18.936] - Invoice ID: 5296021
+[2025-09-29 13:09:18.938] - Current Bill Payment ID: 5324860
+[2025-09-29 13:09:18.939] - Current UTR Date: 10/8/2025
+[2025-09-29 13:09:18.941] 
+=== SIMPLE UTR DATE CHECK ===
+[2025-09-29 13:09:18.942] Invoice: 5296021
+[2025-09-29 13:09:18.944] Current UTR: 10/8/2025
+[2025-09-29 13:09:18.950] AP Bill ID: 5296114
+[2025-09-29 13:09:18.952] Searching for all payments to debug status values...
+[2025-09-29 13:09:18.961] Found 1 payments total (before status filtering)
+[2025-09-29 13:09:18.963] Payment 5324860: Status Text='Confirmed', Status Value='confirmed'
+[2025-09-29 13:09:18.964] ??? Payment 5324860 is confirmed
+[2025-09-29 13:09:18.966] After manual status filtering: 1 confirmed payments
+[2025-09-29 13:09:18.967] Payment 5324860 (Confirmed): UTR 10/8/2025
+[2025-09-29 13:09:18.969] 
+[2025-09-29 13:09:18.971] 
+Earliest UTR Date: 10/8/2025 (Changed: NO)
+[2025-09-29 13:09:18.972] === END UTR DATE CHECK ===
+
+[2025-09-29 13:09:18.974] AFTER calling getEarliestUtrDate:
+[2025-09-29 13:09:18.975] - Returned Date: 10/8/2025
+[2025-09-29 13:09:18.977] - Is Same as Input: YES
+[2025-09-29 13:09:18.979] BEFORE calling getEarliestUtrDate:
+[2025-09-29 13:09:18.980] - Invoice ID: 5296021
+[2025-09-29 13:09:18.982] - Current Bill Payment ID: 5324860
+[2025-09-29 13:09:18.983] - Current UTR Date: 10/8/2025
+[2025-09-29 13:09:18.985] AFTER calling getEarliestUtrDate:
+[2025-09-29 13:09:18.986] - Returned Date: 10/8/2025
+[2025-09-29 13:09:18.988] - Is Same as Input: YES
+[2025-09-29 13:09:18.996] Due date criteria set to: 1
+[2025-09-29 13:10:20.058] SCRIPT ERROR:
+Bill Payment ID: 5324860
+Error Name: CANNOT_CHANGE_INVOICE_PAID_INSTALLMENTS
+Error Message: After a payment is applied to an installment, you cannot change the Due Date field nor the Amount field.
+Parameters Used: billPayId: 5324860, billPaymentAmount: 200, utrGeneratedDate: 10/8/2025
+iterationNo: 0, billId: 5296114, invoiceId: 5296021
+Stack: Error
+    at RecordInvoker.save (suitescript/resources/javascript/record/serverRecordService.js:371:13)
+    at NetSuiteObject.thenableFunction() (suitescript/resources/javascript/record/proxy.js:115:24)
+    at Object.updateDueDate (/SuiteScripts/updateDueDateSS-V2.js:1155:55)
+
+[2025-09-29 13:12:04.710] 
+============================================================
+[2025-09-29 13:12:04.712] DUE DATE UPDATE SCRIPT EXECUTION
+[2025-09-29 13:12:04.714] Timestamp: 2025-09-29 13:12:04 UTC
+[2025-09-29 13:12:04.716] ============================================================
+
+[2025-09-29 13:12:04.717] Bill Payment ID: 5324860
+[2025-09-29 13:12:04.719] Script triggered by: view
+[2025-09-29 13:12:04.720] User: System
+
+[2025-09-29 13:12:04.827] Bill payment record loaded successfully. Type: vendorpayment, ID: 5324860
+[2025-09-29 13:12:04.831] Bill payment amount retrieved: 200
+[2025-09-29 13:12:04.839] Payment details - Items Count: 1, Payment Status: Confirmed, Payment Method: 7, UTR Date: 10/8/2025
+[2025-09-29 13:12:04.841] CONDITION MET: UTR date exists and payment method is 7 (Sambitron) - Entering UTR Flow
+[2025-09-29 13:12:04.844] 
+--- Processing Apply Item 1 of 1 ---
+[2025-09-29 13:12:04.849] Processing item 0: Apply=true, Transaction Type=VendBill
+[2025-09-29 13:12:04.851] Bill ID retrieved: 5296114 for iteration 0
+[2025-09-29 13:12:04.860] Bill form check: 219 (should not be 338)
+[2025-09-29 13:12:05.312] Invoice ID retrieved: 5296021 from bill 5296114
+[2025-09-29 13:12:05.713] Installment Number: 2, Sales Order ID: 5296009
+[2025-09-29 13:12:05.717] Payment confirmed - proceeding with due date updates for Bill: 5296114, Invoice: 5296021
+[2025-09-29 13:12:06.482] Bill 5296114 updated with supplier payment date: 10/8/2025
+[2025-09-29 13:12:06.956] Transaction origin: Supplier Originated, Repayment select: 2
+[2025-09-29 13:12:06.962] OVERRIDE: Using supplier payment days (10) instead of installment days (10)
+[2025-09-29 13:12:06.965] Processing installment 0: Milestone="On Supplier Payment", Days to add=10
+[2025-09-29 13:12:06.967] 
+=== SIMPLE UTR DATE CHECK ===
+[2025-09-29 13:12:06.969] Invoice: 5296021
+[2025-09-29 13:12:06.971] Current UTR: 10/8/2025
+[2025-09-29 13:12:06.977] AP Bill ID: 5296114
+[2025-09-29 13:12:06.979] Searching for all payments to debug status values...
+[2025-09-29 13:12:06.986] Found 1 payments total (before status filtering)
+[2025-09-29 13:12:06.987] Payment 5324860: Status Text='Confirmed', Status Value='confirmed'
+[2025-09-29 13:12:06.989] ??? Payment 5324860 is confirmed
+[2025-09-29 13:12:06.991] After manual status filtering: 1 confirmed payments
+[2025-09-29 13:12:06.992] Payment 5324860 (Confirmed): UTR 10/8/2025
+[2025-09-29 13:12:06.994] 
+[2025-09-29 13:12:06.996] 
+Earliest UTR Date: 10/8/2025 (Changed: NO)
+[2025-09-29 13:12:06.997] === END UTR DATE CHECK ===
+
+[2025-09-29 13:12:07.004] Original calculated due date stored (UTR): 20/8/2025
+[2025-09-29 13:12:07.009] Holiday check for date 20/8/2025: Not Holiday
+[2025-09-29 13:12:07.014] Due date calculated: Original=20/8/2025, Adjusted=20/8/2025
+[2025-09-29 13:12:07.016] 
+*** SUPPLIER ORIGINATED FLOW ***
+[2025-09-29 13:12:07.019] Supplier originated flow - Grace period: 0 days
+[2025-09-29 13:12:07.021] BEFORE calling getEarliestUtrDate:
+[2025-09-29 13:12:07.022] - Invoice ID: 5296021
+[2025-09-29 13:12:07.024] - Current Bill Payment ID: 5324860
+[2025-09-29 13:12:07.028] - Current UTR Date: 10/8/2025
+[2025-09-29 13:12:07.030] 
+=== SIMPLE UTR DATE CHECK ===
+[2025-09-29 13:12:07.031] Invoice: 5296021
+[2025-09-29 13:12:07.033] Current UTR: 10/8/2025
+[2025-09-29 13:12:07.039] AP Bill ID: 5296114
+[2025-09-29 13:12:07.040] Searching for all payments to debug status values...
+[2025-09-29 13:12:07.047] Found 1 payments total (before status filtering)
+[2025-09-29 13:12:07.049] Payment 5324860: Status Text='Confirmed', Status Value='confirmed'
+[2025-09-29 13:12:07.051] ??? Payment 5324860 is confirmed
+[2025-09-29 13:12:07.052] After manual status filtering: 1 confirmed payments
+[2025-09-29 13:12:07.054] Payment 5324860 (Confirmed): UTR 10/8/2025
+[2025-09-29 13:12:07.056] 
+[2025-09-29 13:12:07.057] 
+Earliest UTR Date: 10/8/2025 (Changed: NO)
+[2025-09-29 13:12:07.059] === END UTR DATE CHECK ===
+
+[2025-09-29 13:12:07.061] AFTER calling getEarliestUtrDate:
+[2025-09-29 13:12:07.062] - Returned Date: 10/8/2025
+[2025-09-29 13:12:07.064] - Is Same as Input: YES
+[2025-09-29 13:12:07.066] BEFORE calling getEarliestUtrDate:
+[2025-09-29 13:12:07.067] - Invoice ID: 5296021
+[2025-09-29 13:12:07.069] - Current Bill Payment ID: 5324860
+[2025-09-29 13:12:07.071] - Current UTR Date: 10/8/2025
+[2025-09-29 13:12:07.072] AFTER calling getEarliestUtrDate:
+[2025-09-29 13:12:07.074] - Returned Date: 10/8/2025
+[2025-09-29 13:12:07.075] - Is Same as Input: YES
+[2025-09-29 13:12:07.083] Due date criteria set to: 1
+[2025-09-29 13:13:08.085] SCRIPT ERROR:
+Bill Payment ID: 5324860
+Error Name: CANNOT_CHANGE_INVOICE_PAID_INSTALLMENTS
+Error Message: After a payment is applied to an installment, you cannot change the Due Date field nor the Amount field.
+Parameters Used: billPayId: 5324860, billPaymentAmount: 200, utrGeneratedDate: 10/8/2025
+iterationNo: 0, billId: 5296114, invoiceId: 5296021
+Stack: Error
+    at RecordInvoker.save (suitescript/resources/javascript/record/serverRecordService.js:371:13)
+    at NetSuiteObject.thenableFunction() (suitescript/resources/javascript/record/proxy.js:115:24)
+    at Object.updateDueDate (/SuiteScripts/updateDueDateSS-V2.js:1155:55)
+
