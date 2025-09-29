@@ -53086,3 +53086,181 @@ iterationNo: 0, billId: 5331416, invoiceId: 5331313
 [2025-09-29 04:42:43.899] Script Ended successfully with the parameters:
 billPayId: 5331724, billPaymentAmount: 11, utrGeneratedDate: 10/8/2025
 iterationNo: 0, billId: 5330986, invoiceId: 5330987
+[2025-09-29 12:54:23.877] 
+============================================================
+[2025-09-29 12:54:23.880] DUE DATE UPDATE SCRIPT EXECUTION
+[2025-09-29 12:54:23.881] Timestamp: 2025-09-29 12:54:23 UTC
+[2025-09-29 12:54:23.883] ============================================================
+
+[2025-09-29 12:54:23.885] Bill Payment ID: 5328073
+[2025-09-29 12:54:23.886] Script triggered by: view
+[2025-09-29 12:54:23.888] User: System
+
+[2025-09-29 12:54:23.991] Bill payment record loaded successfully. Type: vendorpayment, ID: 5328073
+[2025-09-29 12:54:23.996] Bill payment amount retrieved: 1048640.12
+[2025-09-29 12:54:24.004] Payment details - Items Count: 1, Payment Status: Confirmed, Payment Method: 7, UTR Date: 15/9/2025
+[2025-09-29 12:54:24.007] CONDITION MET: UTR date exists and payment method is 7 (Sambitron) - Entering UTR Flow
+[2025-09-29 12:54:24.010] 
+--- Processing Apply Item 1 of 1 ---
+[2025-09-29 12:54:24.018] Processing item 0: Apply=true, Transaction Type=VendBill
+[2025-09-29 12:54:24.020] Bill ID retrieved: 5327852 for iteration 0
+[2025-09-29 12:54:24.032] Bill form check: 219 (should not be 338)
+[2025-09-29 12:54:24.484] Invoice ID retrieved: 5327448 from bill 5327852
+[2025-09-29 12:54:24.488] Script Ended successfully with the parameters:
+billPayId: 5328073, billPaymentAmount: 1048640.12, utrGeneratedDate: 15/9/2025
+iterationNo: 0, billId: 5327852, invoiceId: 5327448
+[2025-09-29 12:54:40.604] 
+============================================================
+[2025-09-29 12:54:40.606] DUE DATE UPDATE SCRIPT EXECUTION
+[2025-09-29 12:54:40.607] Timestamp: 2025-09-29 12:54:40 UTC
+[2025-09-29 12:54:40.609] ============================================================
+
+[2025-09-29 12:54:40.611] Bill Payment ID: 5328073
+[2025-09-29 12:54:40.613] Script triggered by: edit
+[2025-09-29 12:54:40.618] User: System
+
+[2025-09-29 12:54:40.725] Bill payment record loaded successfully. Type: vendorpayment, ID: 5328073
+[2025-09-29 12:54:40.729] Bill payment amount retrieved: 1048640.12
+[2025-09-29 12:54:40.737] Payment details - Items Count: 1, Payment Status: Confirmed, Payment Method: 7, UTR Date: 15/9/2025
+[2025-09-29 12:54:40.739] CONDITION MET: UTR date exists and payment method is 7 (Sambitron) - Entering UTR Flow
+[2025-09-29 12:54:40.744] 
+--- Processing Apply Item 1 of 1 ---
+[2025-09-29 12:54:40.750] Processing item 0: Apply=true, Transaction Type=VendBill
+[2025-09-29 12:54:40.751] Bill ID retrieved: 5327852 for iteration 0
+[2025-09-29 12:54:40.767] Bill form check: 219 (should not be 338)
+[2025-09-29 12:54:41.219] Invoice ID retrieved: 5327448 from bill 5327852
+[2025-09-29 12:54:41.223] Script Ended successfully with the parameters:
+billPayId: 5328073, billPaymentAmount: 1048640.12, utrGeneratedDate: 15/9/2025
+iterationNo: 0, billId: 5327852, invoiceId: 5327448
+[2025-09-29 12:54:59.547] 
+============================================================
+[2025-09-29 12:54:59.549] DUE DATE UPDATE SCRIPT EXECUTION
+[2025-09-29 12:54:59.551] Timestamp: 2025-09-29 12:54:59 UTC
+[2025-09-29 12:54:59.552] ============================================================
+
+[2025-09-29 12:54:59.554] Bill Payment ID: 5328073
+[2025-09-29 12:54:59.558] Script triggered by: view
+[2025-09-29 12:54:59.560] User: System
+
+[2025-09-29 12:54:59.662] Bill payment record loaded successfully. Type: vendorpayment, ID: 5328073
+[2025-09-29 12:54:59.666] Bill payment amount retrieved: 1048640.12
+[2025-09-29 12:54:59.674] Payment details - Items Count: 1, Payment Status: Confirmed, Payment Method: 7, UTR Date: 15/9/2025
+[2025-09-29 12:54:59.676] CONDITION MET: UTR date exists and payment method is 7 (Sambitron) - Entering UTR Flow
+[2025-09-29 12:54:59.679] 
+--- Processing Apply Item 1 of 1 ---
+[2025-09-29 12:54:59.684] Processing item 0: Apply=true, Transaction Type=VendBill
+[2025-09-29 12:54:59.688] Bill ID retrieved: 5327852 for iteration 0
+[2025-09-29 12:54:59.698] Bill form check: 219 (should not be 338)
+[2025-09-29 12:55:00.138] Invoice ID retrieved: 5327448 from bill 5327852
+[2025-09-29 12:55:00.142] Script Ended successfully with the parameters:
+billPayId: 5328073, billPaymentAmount: 1048640.12, utrGeneratedDate: 15/9/2025
+iterationNo: 0, billId: 5327852, invoiceId: 5327448
+[2025-09-29 12:58:53.370] 
+============================================================
+[2025-09-29 12:58:53.372] DUE DATE UPDATE SCRIPT EXECUTION
+[2025-09-29 12:58:53.374] Timestamp: 2025-09-29 12:58:53 UTC
+[2025-09-29 12:58:53.376] ============================================================
+
+[2025-09-29 12:58:53.377] Bill Payment ID: 5328073
+[2025-09-29 12:58:53.379] Script triggered by: edit
+[2025-09-29 12:58:53.381] User: System
+
+[2025-09-29 12:58:53.499] Bill payment record loaded successfully. Type: vendorpayment, ID: 5328073
+[2025-09-29 12:58:53.502] Bill payment amount retrieved: 1048640.12
+[2025-09-29 12:58:53.512] Payment details - Items Count: 1, Payment Status: Confirmed, Payment Method: 7, UTR Date: 15/9/2025
+[2025-09-29 12:58:53.514] CONDITION MET: UTR date exists and payment method is 7 (Sambitron) - Entering UTR Flow
+[2025-09-29 12:58:53.517] 
+--- Processing Apply Item 1 of 1 ---
+[2025-09-29 12:58:53.522] Processing item 0: Apply=true, Transaction Type=VendBill
+[2025-09-29 12:58:53.524] Bill ID retrieved: 5327852 for iteration 0
+[2025-09-29 12:58:53.533] Bill form check: 219 (should not be 338)
+[2025-09-29 12:58:54.028] Invoice ID retrieved: 5327448 from bill 5327852
+[2025-09-29 12:58:54.702] Installment Number: 1, Sales Order ID: 5326716
+[2025-09-29 12:58:54.707] Payment confirmed - proceeding with due date updates for Bill: 5327852, Invoice: 5327448
+[2025-09-29 12:58:55.422] Bill 5327852 updated with supplier payment date: 15/9/2025
+[2025-09-29 12:58:55.897] Transaction origin: Buyer Originated, Repayment select: 2
+[2025-09-29 12:58:55.901] Processing installment 0: Milestone="Customer Advance", Days to add=7
+[2025-09-29 12:58:55.903] 
+=== SIMPLE UTR DATE CHECK ===
+[2025-09-29 12:58:55.905] Invoice: 5327448
+[2025-09-29 12:58:55.907] Current UTR: 15/9/2025
+[2025-09-29 12:58:56.475] AP Bill ID: 5327852
+[2025-09-29 12:58:56.478] Searching for all payments to debug status values...
+[2025-09-29 12:58:57.688] Found 1 payments total (before status filtering)
+[2025-09-29 12:58:57.691] Payment 5328073: Status Text='Confirmed', Status Value='confirmed'
+[2025-09-29 12:58:57.694] ??? Payment 5328073 is confirmed
+[2025-09-29 12:58:57.696] After manual status filtering: 1 confirmed payments
+[2025-09-29 12:58:57.699] Payment 5328073 (Confirmed): UTR 15/9/2025
+[2025-09-29 12:58:57.701] 
+[2025-09-29 12:58:57.703] 
+Earliest UTR Date: 15/9/2025 (Changed: NO)
+[2025-09-29 12:58:57.705] === END UTR DATE CHECK ===
+
+[2025-09-29 12:58:57.713] Original calculated due date stored (UTR): 22/9/2025
+[2025-09-29 12:58:57.802] Holiday check for date 22/9/2025: Not Holiday
+[2025-09-29 12:58:57.809] Due date calculated: Original=22/9/2025, Adjusted=22/9/2025
+[2025-09-29 12:58:57.811] 
+*** BUYER ORIGINATED FLOW ***
+[2025-09-29 12:58:57.816] Holiday check for date 22/9/2025: Not Holiday
+[2025-09-29 12:58:57.818] Buyer originated installment date calculated:
+- Adjusted Due Date: 22/9/2025
+- Final Installment Date: 22/9/2025
+- Holiday Skipped: NO
+[2025-09-29 12:59:58.851] Invoice updated successfully: 5327448
+[2025-09-29 12:59:58.853] Script Ended successfully with the parameters:
+billPayId: 5328073, billPaymentAmount: 1048640.12, utrGeneratedDate: 15/9/2025
+iterationNo: 0, billId: 5327852, invoiceId: 5327448
+[2025-09-29 13:00:45.591] 
+============================================================
+[2025-09-29 13:00:45.593] DUE DATE UPDATE SCRIPT EXECUTION
+[2025-09-29 13:00:45.595] Timestamp: 2025-09-29 13:00:45 UTC
+[2025-09-29 13:00:45.597] ============================================================
+
+[2025-09-29 13:00:45.598] Bill Payment ID: 5328073
+[2025-09-29 13:00:45.600] Script triggered by: view
+[2025-09-29 13:00:45.602] User: System
+
+[2025-09-29 13:00:45.709] Bill payment record loaded successfully. Type: vendorpayment, ID: 5328073
+[2025-09-29 13:00:45.713] Bill payment amount retrieved: 1048640.12
+[2025-09-29 13:00:45.721] Payment details - Items Count: 1, Payment Status: Confirmed, Payment Method: 7, UTR Date: 15/9/2025
+[2025-09-29 13:00:45.723] CONDITION MET: UTR date exists and payment method is 7 (Sambitron) - Entering UTR Flow
+[2025-09-29 13:00:45.726] 
+--- Processing Apply Item 1 of 1 ---
+[2025-09-29 13:00:45.731] Processing item 0: Apply=true, Transaction Type=VendBill
+[2025-09-29 13:00:45.733] Bill ID retrieved: 5327852 for iteration 0
+[2025-09-29 13:00:45.743] Bill form check: 219 (should not be 338)
+[2025-09-29 13:00:46.195] Invoice ID retrieved: 5327448 from bill 5327852
+[2025-09-29 13:00:46.628] Installment Number: 1, Sales Order ID: 5326716
+[2025-09-29 13:00:46.636] Payment confirmed - proceeding with due date updates for Bill: 5327852, Invoice: 5327448
+[2025-09-29 13:00:47.409] Bill 5327852 updated with supplier payment date: 15/9/2025
+[2025-09-29 13:00:47.856] Transaction origin: Buyer Originated, Repayment select: 2
+[2025-09-29 13:00:47.860] Processing installment 0: Milestone="Customer Advance", Days to add=7
+[2025-09-29 13:00:47.862] 
+=== SIMPLE UTR DATE CHECK ===
+[2025-09-29 13:00:47.864] Invoice: 5327448
+[2025-09-29 13:00:47.866] Current UTR: 15/9/2025
+[2025-09-29 13:00:47.876] AP Bill ID: 5327852
+[2025-09-29 13:00:47.878] Searching for all payments to debug status values...
+[2025-09-29 13:00:47.888] Found 1 payments total (before status filtering)
+[2025-09-29 13:00:47.890] Payment 5328073: Status Text='Confirmed', Status Value='confirmed'
+[2025-09-29 13:00:47.892] ??? Payment 5328073 is confirmed
+[2025-09-29 13:00:47.893] After manual status filtering: 1 confirmed payments
+[2025-09-29 13:00:47.895] Payment 5328073 (Confirmed): UTR 15/9/2025
+[2025-09-29 13:00:47.897] 
+[2025-09-29 13:00:47.899] 
+Earliest UTR Date: 15/9/2025 (Changed: NO)
+[2025-09-29 13:00:47.901] === END UTR DATE CHECK ===
+
+[2025-09-29 13:00:47.911] Holiday check for date 22/9/2025: Not Holiday
+[2025-09-29 13:00:47.916] Due date calculated: Original=22/9/2025, Adjusted=22/9/2025
+[2025-09-29 13:00:47.918] 
+*** BUYER ORIGINATED FLOW ***
+[2025-09-29 13:00:47.923] Holiday check for date 22/9/2025: Not Holiday
+[2025-09-29 13:00:47.924] Buyer originated installment date calculated:
+- Adjusted Due Date: 22/9/2025
+- Final Installment Date: 22/9/2025
+- Holiday Skipped: NO
+[2025-09-29 13:00:48.799] Invoice updated successfully: 5327448
+[2025-09-29 13:00:48.801] Script Ended successfully with the parameters:
+billPayId: 5328073, billPaymentAmount: 1048640.12, utrGeneratedDate: 15/9/2025
+iterationNo: 0, billId: 5327852, invoiceId: 5327448
