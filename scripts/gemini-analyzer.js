@@ -135,7 +135,8 @@ Only return the formatted errors, no analysis or commentary.`;
                 
                 const postData = JSON.stringify(requestBody);
                
-                const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${this.apiKey}`;
+                
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${this.apiKey}`;
                 const url = new URL(apiUrl);
                 
                 const options = {
