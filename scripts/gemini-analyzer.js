@@ -80,34 +80,55 @@ class GeminiAnalyzer {
     }
     
     createAnalysisPrompt(logType, logContent) {
-        return `Analyze this NetSuite ${logType} system log and extract ALL errors, failures, exceptions, and issues. 
+        return `You are analyzing a NetSuite log. Find ONLY lines that say "SCRIPT ERROR:" and extract the error details that come after them.
 
 LOG CONTENT:
 ${logContent}
 
-Please identify and extract:
-1. Any script errors with details (Bill Payment ID, Invoice ID, Error Name, Error Message, amounts, dates)
-2. Any system errors or failures 
-3. Any exceptions or stack traces
-4. Any timeout or connectivity issues
-5. Any validation failures
-6. Any null pointer exceptions
-7. Any API call failures
+CRITICAL RULES:
+1. ONLY look for lines containing the exact text "SCRIPT ERROR:"
+2. IGNORE "Bill form check" - this is NOT an error
+3. IGNORE lines with "successfully" or "Script Ended successfully"
+4. For each "SCRIPT ERROR:" found, read the NEXT SEVERAL LINES to get:
+   - The line starting with "Bill Payment ID:"
+   - The line starting with "Error Name:" (comes AFTER SCRIPT ERROR)
+   - The line starting with "Error Message:" (comes AFTER Error Name)
+   - The line starting with "Parameters Used:" to extract amounts and IDs
+   - The line starting with "Stack:" for stack trace
 
-For each error found, format it as:
-Error [number]: [timestamp]
-   Type: [error type]
-   Bill Payment ID: [if available]
-   Invoice ID: [if available] 
-   Bill ID: [if available]
-   Amount: [if available]
-   UTR Date: [if available]
-   Error Name: [if available]
-   Error Message: [the actual error message]
-   
-If no errors are found, respond with: "NO ERRORS DETECTED"
+FORMAT each error like this:
+Error [number]: [timestamp from the SCRIPT ERROR line]
+   Type: Script Error
+   Bill Payment ID: [extract from "Bill Payment ID:" line]
+   Invoice ID: [extract from "invoiceId:" in Parameters Used line]
+   Bill ID: [extract from "billId:" in Parameters Used line]
+   Amount: [extract from "billPaymentAmount:" in Parameters Used line]
+   UTR Date: [extract from "utrGeneratedDate:" in Parameters Used line]
+   Error Name: [extract from "Error Name:" line that comes AFTER SCRIPT ERROR]
+   Error Message: [extract from "Error Message:" line that comes AFTER Error Name]
 
-Only return the formatted errors, no analysis or commentary.`;
+EXAMPLE from actual log format:
+[2025-09-30 03:42:57.932] SCRIPT ERROR:
+Bill Payment ID: 5324860
+Error Name: CANNOT_CHANGE_INVOICE_PAID_INSTALLMENTS
+Error Message: After a payment is applied to an installment, you cannot change the Due Date field nor the Amount field.
+Parameters Used: billPayId: 5324860, billPaymentAmount: 200, utrGeneratedDate: 10/8/2025
+iterationNo: 0, billId: 5296114, invoiceId: 5296021
+
+Should output:
+Error 1: 2025-09-30 03:42:57.932
+   Type: Script Error
+   Bill Payment ID: 5324000
+   Invoice ID: 5296039
+   Bill ID: 5296119
+   Amount: 200
+   UTR Date: 10/8/2025
+   Error Name: CANNOT_CHANGE_INVOICE_PAID_INSTALLMENTS
+   Error Message: After a payment is applied to an installment, you cannot change the Due Date field nor the Amount field.
+
+If NO "SCRIPT ERROR:" entries exist, respond with: "NO ERRORS DETECTED"
+
+Extract complete information from the lines following each SCRIPT ERROR.`;
     }
     
     async callGeminiAPI(prompt) {
@@ -128,7 +149,7 @@ Only return the formatted errors, no analysis or commentary.`;
                 };
                 
                 const postData = JSON.stringify(requestBody);
-               const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${this.apiKey}`;
+                const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${this.apiKey}`;
                 const url = new URL(apiUrl);
                 
                 const options = {
