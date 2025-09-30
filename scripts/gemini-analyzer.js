@@ -14,7 +14,6 @@ class GeminiAnalyzer {
         try {
             console.log(`Analyzing ${logFiles.length} log files with Gemini AI...`);
             
-            // Ensure errors directory exists
             const errorsDir = path.join(process.cwd(), 'errors');
             if (!fs.existsSync(errorsDir)) {
                 fs.mkdirSync(errorsDir, { recursive: true });
@@ -28,7 +27,6 @@ class GeminiAnalyzer {
                 results.push(result);
             }
             
-            // Generate daily summary
             await this.generateDailySummary(results, errorsDir);
             
             return results;
@@ -134,11 +132,7 @@ Only return the formatted errors, no analysis or commentary.`;
                 };
                 
                 const postData = JSON.stringify(requestBody);
-               
-                
-            
-               
-                const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${this.apiKey}`;
+                const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash-exp:generateContent?key=${this.apiKey}`;
                 const url = new URL(apiUrl);
                 
                 const options = {
@@ -168,14 +162,56 @@ Only return the formatted errors, no analysis or commentary.`;
                             
                             const result = JSON.parse(data);
                             
-                            if (!result.candidates || result.candidates.length === 0) {
-                                reject(new Error('No response from Gemini AI'));
+                            // Debug logging
+                            console.log('Gemini API Response Structure:', JSON.stringify({
+                                hasCandidates: !!result.candidates,
+                                candidatesLength: result.candidates ? result.candidates.length : 0,
+                                promptFeedback: result.promptFeedback,
+                                firstCandidate: result.candidates && result.candidates[0] ? {
+                                    hasContent: !!result.candidates[0].content,
+                                    finishReason: result.candidates[0].finishReason,
+                                    hasParts: result.candidates[0].content && result.candidates[0].content.parts ? result.candidates[0].content.parts.length : 0
+                                } : null
+                            }, null, 2));
+                            
+                            // Check for prompt blocking
+                            if (result.promptFeedback && result.promptFeedback.blockReason) {
+                                reject(new Error(`Content blocked by Gemini: ${result.promptFeedback.blockReason}`));
                                 return;
                             }
                             
-                            resolve(result.candidates[0].content.parts[0].text);
+                            // Check if candidates exist
+                            if (!result.candidates || result.candidates.length === 0) {
+                                reject(new Error(`No candidates in response. Full response: ${JSON.stringify(result)}`));
+                                return;
+                            }
+                            
+                            const candidate = result.candidates[0];
+                            
+                            // Check finish reason
+                            if (candidate.finishReason === 'SAFETY') {
+                                reject(new Error('Response blocked due to safety filters'));
+                                return;
+                            }
+                            
+                            // Check if content exists
+                            if (!candidate.content || !candidate.content.parts || candidate.content.parts.length === 0) {
+                                reject(new Error(`No content in candidate. Finish reason: ${candidate.finishReason}`));
+                                return;
+                            }
+                            
+                            const text = candidate.content.parts[0].text;
+                            
+                            if (!text) {
+                                reject(new Error('Empty text in response'));
+                                return;
+                            }
+                            
+                            resolve(text);
                             
                         } catch (parseError) {
+                            console.error('Parse error details:', parseError);
+                            console.error('Raw data:', data.substring(0, 500));
                             reject(new Error(`Failed to parse Gemini response: ${parseError.message}`));
                         }
                     });
@@ -347,6 +383,7 @@ This could indicate:
 - Network connectivity issues
 - Invalid API key
 - Log file format issues
+- Content safety blocks
 
 ==============================================
 NEXT STEPS:
