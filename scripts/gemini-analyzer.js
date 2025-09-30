@@ -80,40 +80,34 @@ class GeminiAnalyzer {
     }
     
     createAnalysisPrompt(logType, logContent) {
-        return `Analyze this NetSuite Due Date system log and extract ONLY actual errors and failures.
+        return `Analyze this NetSuite ${logType} system log and extract ALL errors, failures, exceptions, and issues. 
 
 LOG CONTENT:
 ${logContent}
 
-CRITICAL: Only report actual errors. IGNORE these normal operations:
-- "Bill form check" messages (these are validations, not errors)
-- "Script Ended successfully" messages
-- UTR date check operations
-- Holiday check operations
-- Debug statements and status updates
-- Any line that says "successfully" or "loaded successfully"
+Please identify and extract:
+1. Any script errors with details (Bill Payment ID, Invoice ID, Error Name, Error Message, amounts, dates)
+2. Any system errors or failures 
+3. Any exceptions or stack traces
+4. Any timeout or connectivity issues
+5. Any validation failures
+6. Any null pointer exceptions
+7. Any API call failures
 
-ONLY EXTRACT these as errors:
-1. Lines containing "SCRIPT ERROR:"
-2. Lines with "Error Name:" followed by an error code
-3. Lines with "Error Message:" followed by error text
-4. Exception stack traces starting with "Stack:"
-5. Lines containing "Failed" or "Exception" (but not in normal flow descriptions)
+For each error found, format it as:
+Error [number]: [timestamp]
+   Type: [error type]
+   Bill Payment ID: [if available]
+   Invoice ID: [if available] 
+   Bill ID: [if available]
+   Amount: [if available]
+   UTR Date: [if available]
+   Error Name: [if available]
+   Error Message: [the actual error message]
+   
+If no errors are found, respond with: "NO ERRORS DETECTED"
 
-For EACH actual error found, extract the complete information:
-Error [number]: [exact timestamp from the SCRIPT ERROR line]
-   Bill Payment ID: [from "Bill Payment ID:" line above the error]
-   Invoice ID: [from "invoiceId:" in Parameters Used section]
-   Bill ID: [from "billId:" in Parameters Used section]
-   Amount: [from "billPaymentAmount:" in Parameters Used section]
-   UTR Date: [from "utrGeneratedDate:" in Parameters Used section]
-   Error Name: [from "Error Name:" line]
-   Error Message: [from "Error Message:" line - include full text]
-   Stack Trace: [from "Stack:" line onwards - include full stack]
-
-If NO actual errors (SCRIPT ERROR entries) are found, respond with: "NO ERRORS DETECTED"
-
-Return ONLY the formatted errors with complete details extracted from the log.`;
+Only return the formatted errors, no analysis or commentary.`;
     }
     
     async callGeminiAPI(prompt) {
@@ -134,7 +128,7 @@ Return ONLY the formatted errors with complete details extracted from the log.`;
                 };
                 
                 const postData = JSON.stringify(requestBody);
-                 const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${this.apiKey}`;
+               const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${this.apiKey}`;
                 const url = new URL(apiUrl);
                 
                 const options = {
@@ -164,7 +158,6 @@ Return ONLY the formatted errors with complete details extracted from the log.`;
                             
                             const result = JSON.parse(data);
                             
-                            // Debug logging
                             console.log('Gemini API Response Structure:', JSON.stringify({
                                 hasCandidates: !!result.candidates,
                                 candidatesLength: result.candidates ? result.candidates.length : 0,
@@ -175,13 +168,11 @@ Return ONLY the formatted errors with complete details extracted from the log.`;
                                 } : null
                             }, null, 2));
                             
-                            // Check for prompt blocking
                             if (result.promptFeedback && result.promptFeedback.blockReason) {
                                 reject(new Error(`Content blocked by Gemini: ${result.promptFeedback.blockReason}`));
                                 return;
                             }
                             
-                            // Check if candidates exist
                             if (!result.candidates || result.candidates.length === 0) {
                                 reject(new Error(`No candidates in response. Full response: ${JSON.stringify(result)}`));
                                 return;
@@ -189,13 +180,11 @@ Return ONLY the formatted errors with complete details extracted from the log.`;
                             
                             const candidate = result.candidates[0];
                             
-                            // Check finish reason
                             if (candidate.finishReason === 'SAFETY') {
                                 reject(new Error('Response blocked due to safety filters'));
                                 return;
                             }
                             
-                            // Check if content exists
                             if (!candidate.content || !candidate.content.parts || candidate.content.parts.length === 0) {
                                 reject(new Error(`No content in candidate. Finish reason: ${candidate.finishReason}`));
                                 return;
@@ -208,11 +197,13 @@ Return ONLY the formatted errors with complete details extracted from the log.`;
                                 return;
                             }
                             
-                            // Warn if response was truncated
                             if (candidate.finishReason === 'MAX_TOKENS') {
                                 console.warn('WARNING: Response truncated due to token limit');
                                 text += '\n\n[WARNING: Analysis may be incomplete - response was truncated due to length]';
                             }
+                            
+                            console.log('Received response from Gemini AI');
+                            console.log('AI Response preview:', text.substring(0, 200) + '...');
                             
                             resolve(text);
                             
