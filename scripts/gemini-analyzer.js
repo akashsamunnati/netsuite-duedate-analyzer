@@ -80,38 +80,40 @@ class GeminiAnalyzer {
     }
     
     createAnalysisPrompt(logType, logContent) {
-        return `Analyze this NetSuite Due Date system log and extract ALL errors, failures, exceptions, and issues.
+        return `Analyze this NetSuite Due Date system log and extract ONLY actual errors and failures.
 
 LOG CONTENT:
 ${logContent}
 
-Please identify and extract:
-1. Any script errors with details (Bill Payment ID, Invoice ID, Error Name, Error Message, amounts, dates)
-2. Any Due Date calculation errors
-3. Any exceptions or stack traces
-4. Any timeout or connectivity issues
-5. Any validation failures
-6. Any null pointer exceptions
-7. Any API call failures
-8. Any database connection issues
-9. Any authentication failures
-10. Any workflow errors related to due date processing
+CRITICAL: Only report actual errors. IGNORE these normal operations:
+- "Bill form check" messages (these are validations, not errors)
+- "Script Ended successfully" messages
+- UTR date check operations
+- Holiday check operations
+- Debug statements and status updates
+- Any line that says "successfully" or "loaded successfully"
 
-For each error found, format it as:
-Error [number]: [timestamp]
-   Type: [error type]
-   Bill Payment ID: [if available]
-   Invoice ID: [if available] 
-   Bill ID: [if available]
-   Amount: [if available]
-   UTR Date: [if available]
-   Error Name: [if available]
-   Error Message: [the actual error message]
-   Stack Trace: [if available]
-   
-If no errors are found, respond with: "NO ERRORS DETECTED"
+ONLY EXTRACT these as errors:
+1. Lines containing "SCRIPT ERROR:"
+2. Lines with "Error Name:" followed by an error code
+3. Lines with "Error Message:" followed by error text
+4. Exception stack traces starting with "Stack:"
+5. Lines containing "Failed" or "Exception" (but not in normal flow descriptions)
 
-Only return the formatted errors, no analysis or commentary.`;
+For EACH actual error found, extract the complete information:
+Error [number]: [exact timestamp from the SCRIPT ERROR line]
+   Bill Payment ID: [from "Bill Payment ID:" line above the error]
+   Invoice ID: [from "invoiceId:" in Parameters Used section]
+   Bill ID: [from "billId:" in Parameters Used section]
+   Amount: [from "billPaymentAmount:" in Parameters Used section]
+   UTR Date: [from "utrGeneratedDate:" in Parameters Used section]
+   Error Name: [from "Error Name:" line]
+   Error Message: [from "Error Message:" line - include full text]
+   Stack Trace: [from "Stack:" line onwards - include full stack]
+
+If NO actual errors (SCRIPT ERROR entries) are found, respond with: "NO ERRORS DETECTED"
+
+Return ONLY the formatted errors with complete details extracted from the log.`;
     }
     
     async callGeminiAPI(prompt) {
@@ -127,13 +129,12 @@ Only return the formatted errors, no analysis or commentary.`;
                         temperature: 0.1,
                         topK: 40,
                         topP: 0.95,
-                        maxOutputTokens: 4000,
+                        maxOutputTokens: 8000,
                     }
                 };
                 
                 const postData = JSON.stringify(requestBody);
-              
-                  const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${this.apiKey}`;
+                 const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${this.apiKey}`;
                 const url = new URL(apiUrl);
                 
                 const options = {
@@ -167,7 +168,6 @@ Only return the formatted errors, no analysis or commentary.`;
                             console.log('Gemini API Response Structure:', JSON.stringify({
                                 hasCandidates: !!result.candidates,
                                 candidatesLength: result.candidates ? result.candidates.length : 0,
-                                promptFeedback: result.promptFeedback,
                                 firstCandidate: result.candidates && result.candidates[0] ? {
                                     hasContent: !!result.candidates[0].content,
                                     finishReason: result.candidates[0].finishReason,
@@ -201,11 +201,17 @@ Only return the formatted errors, no analysis or commentary.`;
                                 return;
                             }
                             
-                            const text = candidate.content.parts[0].text;
+                            let text = candidate.content.parts[0].text;
                             
                             if (!text) {
                                 reject(new Error('Empty text in response'));
                                 return;
+                            }
+                            
+                            // Warn if response was truncated
+                            if (candidate.finishReason === 'MAX_TOKENS') {
+                                console.warn('WARNING: Response truncated due to token limit');
+                                text += '\n\n[WARNING: Analysis may be incomplete - response was truncated due to length]';
                             }
                             
                             resolve(text);
