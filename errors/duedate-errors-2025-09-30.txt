@@ -1,8 +1,8 @@
 DUE DATE LOG ERROR REPORT
-Generated: 2025-09-30T11:45:46.514Z
+Generated: 2025-09-30T13:05:21.217Z
 Date: 2025-09-30
 Source File: dueDateLogs-2025-09-30.txt
-Status: ERRORS DETECTED (1 errors found)
+Status: ERRORS DETECTED (2 errors found)
 Detected by: Gemini AI
 
 ==============================================
@@ -11,7 +11,25 @@ ERRORS DETECTED:
 
 Error 1: 2025-09-30 03:42:57.932
    Type: Script Error
-   Bill Payment
+   Bill Payment ID: 5324860
+   Invoice ID: 5296021
+   Bill ID: 5296114
+   Amount: 200
+   UTR Date: 10/8/2025
+   Error Name: N/A
+   Error Message: SCRIPT ERROR: (Details missing from log)
+   Stack Trace: N/A
+
+Error 2: 2025-09-30 03:42:48.950
+   Type: Validation Failure / Unexpected Condition
+   Bill Payment ID: 5324860
+   Invoice ID: 5296021
+   Bill ID: 5296114
+   Amount: 200
+   UTR Date: 10/8/2025
+   Error Name: N/A
+   Error Message: Bill form check: 219 (should not be 338)
+   Stack Trace: N/A
 
 ==============================================
 RECOMMENDED ACTIONS:
