@@ -1,5 +1,5 @@
 DUE DATE LOG ERROR REPORT
-Generated: 2025-09-30T11:28:25.909Z
+Generated: 2025-09-30T11:43:34.629Z
 Date: 2025-09-30
 Source File: dueDateLogs-2025-09-30.txt
 Status: AI ANALYSIS FAILED
@@ -9,7 +9,14 @@ ERROR DETAILS:
 ==============================================
 
 AI analysis could not be completed.
-Reason: Failed to parse Gemini response: Cannot read properties of undefined (reading '0')
+Reason: Gemini API error: 404 - {
+  "error": {
+    "code": 404,
+    "message": "models/gemini-2.0-flash-exp is not found for API version v1, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.",
+    "status": "NOT_FOUND"
+  }
+}
+
 
 MANUAL REVIEW REQUIRED:
 Please manually review the Due Date log file: dueDateLogs-2025-09-30.txt
@@ -19,6 +26,7 @@ This could indicate:
 - Network connectivity issues
 - Invalid API key
 - Log file format issues
+- Content safety blocks
 
 ==============================================
 NEXT STEPS:
