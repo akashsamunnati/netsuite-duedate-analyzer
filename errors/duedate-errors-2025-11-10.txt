@@ -1,0 +1,145 @@
+DUE DATE LOG ERROR REPORT
+Generated: 2025-11-10T13:08:49.700Z
+Date: 2025-11-10
+Source File: dueDateLogs-2025-11-10.txt
+Status: NO ERRORS FOUND
+Detected by: Gemini AI
+
+==============================================
+ANALYSIS RESULT:
+==============================================
+
+```python
+import re
+
+def parse_netsuite_log(log_content):
+    """
+    Parses NetSuite log content to find SCRIPT ERRORs and extract specific details.
+
+    Args:
+        log_content (str): The full content of the NetSuite log.
+
+    Returns:
+        str: A formatted string of extracted error details, or "NO ERRORS DETECTED".
+    """
+    lines = log_content.strip().split('\n')
+    errors = []
+    error_count = 0
+    
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        # Rule 1: Find ONLY lines that say "SCRIPT ERROR:"
+        if "SCRIPT ERROR:" in line:
+            error_count += 1
+            error_data = {
+                "timestamp": line.split(']')[0][1:].strip(),
+                "Type": "Script Error",
+                "Bill Payment ID": "N/A",
+                "Invoice ID": "N/A",
+                "Bill ID": "N/A",
+                "Amount": "N/A",
+                "UTR Date": "N/A",
+                "Error Name": "N/A",
+                "Error Message": "N/A"
+            }
+            
+            # Rule 4: Read subsequent lines for error details
+            j = i + 1
+            while j < len(lines):
+                detail_line = lines[j].strip()
+                
+                # Stop if we hit a new timestamped log entry or the stack trace
+                # A new timestamped line indicates the start of a new log entry,
+                # unless it's the very next line after SCRIPT ERROR and contains details.
+                # We stop if it's a new timestamped line AND we've already processed some details.
+                if re.match(r'^\[\d{4}-\d{2}-\d{2}', detail_line) and \
+                   (error_data["Error Name"] != "N/A" or error_data["Error Message"] != "N/A"):
+                    break
+                
+                if detail_line.startswith("Bill Payment ID:"):
+                    error_data["Bill Payment ID"] = detail_line.split(":", 1)[1].strip()
+                elif detail_line.startswith("Error Name:"):
+                    error_data["Error Name"] = detail_line.split(":", 1)[1].strip()
+                elif detail_line.startswith("Error Message:"):
+                    error_data["Error Message"] = detail_line.split(":", 1)[1].strip()
+                elif detail_line.startswith("Parameters Used:"):
+                    # Parameters Used can span multiple lines
+                    params_str = detail_line.split(":", 1)[1].strip()
+                    k = j + 1
+                    # Continue reading lines as part of "Parameters Used" until "Stack:" or a new log entry
+                    while k < len(lines) and not lines[k].strip().startswith("Stack:") and \
+                          not re.match(r'^\[\d{4}-\d{2}-\d{2}', lines[k].strip()):
+                        if lines[k].strip(): # Only append if not empty
+                            params_str += ", " + lines[k].strip()
+                        k += 1
+                    
+                    # Extract individual parameters using regex
+                    # This regex captures key-value pairs like "key: value"
+                    params = re.findall(r'(\w+):\s*([^,]+)', params_str)
+                    for key, value in params:
+                        if key == "billPaymentAmount":
+                            error_data["Amount"] = value.strip()
+                        elif key == "utrGeneratedDate":
+                            error_data["UTR Date"] = value.strip()
+                        elif key == "billId":
+                            error_data["Bill ID"] = value.strip()
+                        elif key == "invoiceId":
+                            error_data["Invoice ID"] = value.strip()
+                    j = k - 1 # Adjust j to continue scanning from after the parameters block
+                elif detail_line.startswith("Stack:"):
+                    # Stack trace marks the end of the error details we care about
+                    break
+                
+                j += 1
+            errors.append(error_data)
+            i = j # Continue scanning from after this error block
+        else:
+            i += 1
+            
+    if not errors:
+        return "NO ERRORS DETECTED"
+    
+    output = []
+    for idx, error in enumerate(errors):
+        output.append(f"Error {idx+1}: {error['timestamp']}")
+        output.append(f"   Type: {error['Type']}")
+        output.append(f"   Bill Payment ID: {error['Bill Payment ID']}")
+        output.append(f"   Invoice ID: {error['Invoice ID']}")
+        output.append(f"   Bill ID: {error['Bill ID']}")
+        output.append(f"   Amount: {error['Amount']}")
+        output.append(f"   UTR Date: {error['UTR Date']}")
+        output.append(f"   Error Name: {error['Error Name']}")
+        output.append(f"   Error Message: {error['Error Message']}")
+        
+    return "\n".join(output)
+
+# LOG CONTENT provided in the problem description
+LOG_CONTENT = """
+[2025-09-30 03:42:48.708] 
+============================================================
+[2025-09-30 03:42:48.710] DUE DATE UPDATE SCRIPT EXECUTION
+[2025-09-30 03:42:48.712] Timestamp: 2025-09-30 03:42:48 UTC
+[2025-09-30 03:42:48.713] ============================================================
+
+[2025-09-30 03:42:48.715] Bill Payment ID: 5324860
+[2025-09-30 03:42:48.716] Script triggered by: view
+[2025-09-30 03:42:48.717] User: System
+
+[2025-09-30 03:42:48.866] Bill payment record loaded successfully. Type: vendorpayment, ID: 5324860
+[2025-09-30 03:42:48.870] Bill payment amount retrieved: 200
+[2025-09-30 03:42:48.894] Payment details - Items Count: 1, Payment Status: Confirmed, Payment Method: 7, UTR Date: 10/8/2025
+[2025-09-30 03:42:48.896] CONDITION MET: UTR date exists and payment method is 7 (Sambitron) - Entering UTR Flow
+[2025-09-30 03:42:48.899] 
+--- Processing Apply Item 1 of 1 ---
+[2025-09-30 03:42:48.905] Processing item 0: Apply=true, Transaction Type=VendBill
+[2025-09-30 03:42:48.906] Bill ID retrieved: 5296114 for iteration 0
+[2025-09
+
+[WARNING: Analysis may be incomplete - response was truncated due to length]
+
+The Due Date system appears to be running normally.
+
+==============================================
+END OF REPORT
+==============================================
