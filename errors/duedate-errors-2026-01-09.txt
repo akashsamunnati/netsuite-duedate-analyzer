@@ -1,0 +1,54 @@
+DUE DATE LOG ERROR REPORT
+Generated: 2026-01-09T13:21:17.948Z
+Date: 2026-01-09
+Source File: dueDateLogs-2026-01-09.txt
+Status: NO ERRORS FOUND
+Detected by: Gemini AI
+
+==============================================
+ANALYSIS RESULT:
+==============================================
+
+```python
+import re
+
+def analyze_netsuite_log(log_content):
+    """
+    Analyzes NetSuite log content to find SCRIPT ERRORs and extract specific details.
+
+    Args:
+        log_content (str): The full content of the NetSuite log.
+
+    Returns:
+        str: A formatted string of extracted error details, or "NO ERRORS DETECTED".
+    """
+    lines = log_content.strip().split('\n')
+    extracted_errors = []
+    i = 0
+
+    while i < len(lines):
+        line = lines[i]
+        if "SCRIPT ERROR:" in line:
+            error_data = {}
+            
+            # Extract timestamp from the SCRIPT ERROR line
+            timestamp_match = re.match(r'\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\]', line)
+            if timestamp_match:
+                error_data['timestamp'] = timestamp_match.group(1)
+            
+            # Read subsequent lines for error details
+            j = i + 1
+            current_params_str = ""
+            
+            while j < len(lines) and not lines[j].strip().startswith('[') and not "SCRIPT ERROR:" in lines[j]:
+                sub_line = lines[j].strip()
+                
+                if sub_line.startswith("Bill
+
+[WARNING: Analysis may be incomplete - response was truncated due to length]
+
+The Due Date system appears to be running normally.
+
+==============================================
+END OF REPORT
+==============================================
