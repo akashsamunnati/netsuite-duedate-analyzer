@@ -1,0 +1,48 @@
+DUE DATE LOG ERROR REPORT
+Generated: 2026-01-10T13:07:22.396Z
+Date: 2026-01-10
+Source File: dueDateLogs-2026-01-10.txt
+Status: ERRORS DETECTED (0 errors found)
+Detected by: Gemini AI
+
+==============================================
+ERRORS DETECTED:
+==============================================
+
+```python
+import re
+
+def parse_netsuite_log(log_content):
+    errors = []
+    lines = log_content.strip().split('\n')
+    error_counter = 0
+
+    # Regex patterns for extracting information
+    script_error_pattern = re.compile(r"^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\] SCRIPT ERROR:")
+    bill_payment_id_pattern = re.compile(r"^Bill Payment ID: (\d+)")
+    error_name_pattern = re.compile(r"^Error Name: (.*)")
+    error_message_pattern = re.compile(r"^Error Message: (.*)")
+    
+    # Regex for the first part of "Parameters Used" line
+    params_used_line1_pattern = re.compile(r"Parameters Used: billPayId: (\d+), billPaymentAmount: (\d+), utrGeneratedDate: ([\d/]+)")
+    # Regex for the second part of "Parameters Used" (which is on the next line)
+    params_used_line2_pattern = re.compile(r"iterationNo: \d+, billId: (\d+), invoiceId: (\d+)")
+    
+    # Pattern to detect a new timestamped log entry, to know when to stop parsing current error details
+    new_log
+
+[WARNING: Analysis may be incomplete - response was truncated due to length]
+
+==============================================
+RECOMMENDED ACTIONS:
+==============================================
+
+1. Review errors above immediately
+2. Check Due Date system status
+3. Contact development team if critical errors found
+4. Update error tracking system
+5. Monitor system for resolution
+
+==============================================
+END OF REPORT
+==============================================
