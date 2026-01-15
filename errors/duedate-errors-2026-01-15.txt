@@ -1,0 +1,96 @@
+DUE DATE LOG ERROR REPORT
+Generated: 2026-01-15T13:22:39.669Z
+Date: 2026-01-15
+Source File: dueDateLogs-2026-01-15.txt
+Status: NO ERRORS FOUND
+Detected by: Gemini AI
+
+==============================================
+ANALYSIS RESULT:
+==============================================
+
+```python
+import re
+
+def analyze_netsuite_log(log_content):
+    """
+    Analyzes NetSuite log content to find SCRIPT ERRORs and extract specific details.
+
+    Args:
+        log_content (str): The full content of the NetSuite log.
+
+    Returns:
+        str: A formatted string of extracted error details, or "NO ERRORS DETECTED".
+    """
+    errors = []
+    log_lines = log_content.strip().split('\n')
+    error_counter = 0
+
+    i = 0
+    while i < len(log_lines):
+        line = log_lines[i]
+        
+        # Rule 1: Find lines containing the exact text "SCRIPT ERROR:"
+        if "SCRIPT ERROR:" in line:
+            error_counter += 1
+            error_data = {
+                "timestamp": "",
+                "bill_payment_id": "",
+                "invoice_id": "",
+                "bill_id": "",
+                "amount": "",
+                "utr_date": "",
+                "error_name": "",
+                "error_message": ""
+            }
+
+            # Extract timestamp from the SCRIPT ERROR line
+            timestamp_match = re.match(r"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\] SCRIPT ERROR:", line)
+            if timestamp_match:
+                error_data["timestamp"] = timestamp_match.group(1)
+
+            # Read subsequent lines for error details
+            j = i + 1
+            while j < len(log_lines):
+                detail_line = log_lines[j].strip()
+
+                # Stop if we hit another timestamped line (start of a new log entry)
+                # or if we hit the "Stack:" line (end of relevant error details for output)
+                if re.match(r"\[\d{4}-\d{2}-\d{2}", detail_line) or detail_line.startswith("Stack:"):
+                    break
+
+                if detail_line.startswith("Bill Payment ID:"):
+                    error_data["bill_payment_id"] = detail_line.split(":", 1)[1].strip()
+                elif detail_line.startswith("Error Name:"):
+                    error_data["error_name"] = detail_line.split(":", 1)[1].strip()
+                elif detail_line.startswith("Error Message:"):
+                    error_data["error_message"] = detail_line.split(":", 1)[1].strip()
+                elif detail_line.startswith("Parameters Used:"):
+                    # Parameters Used can span two lines. Combine them for easier parsing.
+                    params_full_line = detail_line
+                    # Check if the next line is a continuation of parameters
+                    if j + 1 < len(log_lines) and not re.match(r"\[\d{4}-\d{2}-\d{2}", log_lines[j+1]) and \
+                       not log_lines[j+1].strip().startswith("Stack:"):
+                        params_full_line += ", " + log_lines[j+1].strip()
+                        j += 1 # Advance j to skip the next line as it's already processed
+
+                    # Extract details using regex from the combined parameters line
+                    amount_match = re.search(r"billPaymentAmount:\s*(\d+)", params_full_line)
+                    if amount_match:
+                        error_data["amount"] = amount_match.group(1)
+                    
+                    utr_date_match = re.search(r"utrGeneratedDate:\s*([\d/]+)", params_full_line)
+                    if utr_date_match:
+                        error_data["utr_date"] = utr_date_match.group(1)
+                    
+                    bill_id_match = re.search(r"billId:\s*(\d+)", params_full_line)
+                    if bill_id_match:
+                        error_data["bill_id"]
+
+[WARNING: Analysis may be incomplete - response was truncated due to length]
+
+The Due Date system appears to be running normally.
+
+==============================================
+END OF REPORT
+==============================================
