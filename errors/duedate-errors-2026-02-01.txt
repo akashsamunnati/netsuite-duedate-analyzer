@@ -1,0 +1,128 @@
+DUE DATE LOG ERROR REPORT
+Generated: 2026-02-01T13:25:43.211Z
+Date: 2026-02-01
+Source File: dueDateLogs-2026-02-01.txt
+Status: NO ERRORS FOUND
+Detected by: Gemini AI
+
+==============================================
+ANALYSIS RESULT:
+==============================================
+
+```python
+import re
+
+def analyze_netsuite_log(log_content):
+    """
+    Analyzes NetSuite log content to find SCRIPT ERRORs and extract specific details.
+
+    Args:
+        log_content (str): The full content of the NetSuite log.
+
+    Returns:
+        str: A formatted string of extracted error details, or "NO ERRORS DETECTED".
+    """
+    lines = log_content.strip().split('\n')
+    extracted_errors = []
+    
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        if "SCRIPT ERROR:" in line:
+            error_data = {}
+            
+            # Extract timestamp from the SCRIPT ERROR line
+            timestamp_match = re.match(r'\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\]', line)
+            if timestamp_match:
+                error_data['timestamp'] = timestamp_match.group(1)
+            
+            # Read subsequent lines for error details
+            j = i + 1
+            while j < len(lines):
+                detail_line = lines[j].strip()
+                
+                if detail_line.startswith("Bill Payment ID:"):
+                    error_data['bill_payment_id'] = detail_line.split(":", 1)[1].strip()
+                elif detail_line.startswith("Error Name:"):
+                    error_data['error_name'] = detail_line.split(":", 1)[1].strip()
+                elif detail_line.startswith("Error Message:"):
+                    error_data['error_message'] = detail_line.split(":", 1)[1].strip()
+                elif detail_line.startswith("Parameters Used:"):
+                    params_content = detail_line.split(":", 1)[1].strip()
+                    
+                    # Check for multi-line parameters (like iterationNo, billId, invoiceId)
+                    if j + 1 < len(lines) and (
+                        lines[j+1].strip().startswith("iterationNo:") or 
+                        lines[j+1].strip().startswith("billId:") or 
+                        lines[j+1].strip().startswith("invoiceId:")
+                    ):
+                        params_content += ", " + lines[j+1].strip()
+                        j += 1 # Advance j to skip the next line as it's already processed
+                    
+                    # Extract individual parameters from the combined string
+                    param_matches = re.findall(r'(\w+):\s*([^,]+)', params_content)
+                    for key, value in param_matches:
+                        if key == 'billPaymentAmount':
+                            error_data['amount'] = value.strip()
+                        elif key == 'utrGeneratedDate':
+                            error_data['utr_date'] = value.strip()
+                        elif key == 'billId':
+                            error_data['bill_id'] = value.strip()
+                        elif key == 'invoiceId':
+                            error_data['invoice_id'] = value.strip()
+                elif detail_line.startswith("Stack:"):
+                    # The "Stack:" line marks the end of the error details we need to extract.
+                    break
+                
+                # If the next line starts with a timestamp, it's a new log entry, so this error block ends.
+                if j + 1 < len(lines) and re.match(r'\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\]', lines[j+1]):
+                    break
+                
+                j += 1
+            
+            extracted_errors.append(error_data)
+            i = j # Move the main pointer past the processed error block
+        else:
+            i += 1
+            
+    if not extracted_errors:
+        return "NO ERRORS DETECTED"
+    
+    output_lines = []
+    for idx, error in enumerate(extracted_errors):
+        output_lines.append(f"Error {idx+1}: {error.get('timestamp', 'N/A')}")
+        output_lines.append(f"   Type: Script Error")
+        output_lines.append(f"   Bill Payment ID: {error.get('bill_payment_id', 'N/A')}")
+        output_lines.append(f"   Invoice ID: {error.get('invoice_id', 'N/A')}")
+        output_lines.append(f"   Bill ID: {error.get('bill_id', 'N/A')}")
+        output_lines.append(f"   Amount: {error.get('amount', 'N/A')}")
+        output_lines.append(f"   UTR Date: {error.get('utr_date', 'N/A')}")
+        output_lines.append(f"   Error Name: {error.get('error_name', 'N/A')}")
+        output_lines.append(f"   Error Message: {error.get('error_message', 'N/A')}")
+        
+    return "\n".join(output_lines)
+
+# Provided LOG CONTENT
+LOG_CONTENT = """
+[2025-09-30 03:42:48.708] 
+============================================================
+[2025-09-30 03:42:48.710] DUE DATE UPDATE SCRIPT EXECUTION
+[2025-09-30 03:42:48.712] Timestamp: 2025-09-30 03:42:48 UTC
+[2025-09-30 03:42:48.713] ============================================================
+
+[2025-09-30 03:42:48.715] Bill Payment ID: 5324860
+[2025-09-30 03:42:48.716] Script triggered by: view
+[2025-09-30 03:42:48.717] User: System
+
+[2025-09-30 03:42:48.866] Bill payment record loaded successfully. Type: vendorpayment, ID: 5324860
+[2025-09-30 03:42:48.870] Bill payment amount retrieved: 200
+[2025-09-30 03:42:48.894] Payment details - Items Count: 1, Payment Status: Confirmed, Payment Method: 7, UTR Date: 10/8/2025
+[2025
+
+[WARNING: Analysis may be incomplete - response was truncated due to length]
+
+The Due Date system appears to be running normally.
+
+==============================================
+END OF REPORT
+==============================================
