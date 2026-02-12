@@ -1,0 +1,103 @@
+DUE DATE LOG ERROR REPORT
+Generated: 2026-02-12T13:50:35.605Z
+Date: 2026-02-12
+Source File: dueDateLogs-2026-02-12.txt
+Status: ERRORS DETECTED (0 errors found)
+Detected by: Gemini AI
+
+==============================================
+ERRORS DETECTED:
+==============================================
+
+```python
+import re
+
+def analyze_netsuite_log(log_content):
+    lines = log_content.strip().split('\n')
+    errors = []
+    error_counter = 0
+
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        # Rule 1: Find lines that say "SCRIPT ERROR:"
+        if "SCRIPT ERROR:" in line:
+            error_counter += 1
+            error_details = {
+                "Timestamp": "",
+                "Type": "Script Error",
+                "Bill Payment ID": "N/A",
+                "Invoice ID": "N/A",
+                "Bill ID": "N/A",
+                "Amount": "N/A",
+                "UTR Date": "N/A",
+                "Error Name": "N/A",
+                "Error Message": "N/A"
+            }
+
+            # Extract timestamp from the SCRIPT ERROR line
+            timestamp_match = re.match(r'\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\]', line)
+            if timestamp_match:
+                error_details["Timestamp"] = timestamp_match.group(1)
+
+            # Read subsequent lines for error details
+            j = i + 1
+            parameters_buffer = []
+            while j < len(lines):
+                sub_line = lines[j].strip()
+
+                # Stop if we hit another timestamped line or a new SCRIPT ERROR
+                if re.match(r'\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\]', lines[j]) and not "SCRIPT ERROR:" in lines[j]:
+                    break
+                if "SCRIPT ERROR:" in lines[j]:
+                    break # Found a new error, stop processing current one
+
+                if sub_line.startswith("Bill Payment ID:"):
+                    error_details["Bill Payment ID"] = sub_line.split(":", 1)[1].strip()
+                elif sub_line.startswith("Error Name:"):
+                    error_details["Error Name"] = sub_line.split(":", 1)[1].strip()
+                elif sub_line.startswith("Error Message:"):
+                    error_details["Error Message"] = sub_line.split(":", 1)[1].strip()
+                elif sub_line.startswith("Parameters Used:"):
+                    # Start collecting parameters, remove the "Parameters Used:" prefix
+                    parameters_buffer.append(sub_line.replace("Parameters Used:", "").strip())
+                elif parameters_buffer and not sub_line.startswith("Stack:"):
+                    # If we are already collecting parameters and the line is not the start of a stack trace,
+                    # assume it's a continuation of parameters.
+                    parameters_buffer.append(sub_line)
+                elif sub_line.startswith("Stack:"):
+                    # Stop collecting parameters when stack trace starts
+                    break
+                j += 1
+            
+            # Process the collected parameters
+            if parameters_buffer:
+                # Join all parts of the parameters into a single string for easier regex matching
+                full_params_string = " ".join(parameters_buffer).replace('\n', ' ').replace('\r', '')
+                
+                # Extract specific values using regex
+                bill_payment_amount_match = re.search(r'billPaymentAmount:\s*(\d+)', full_params_string)
+                if bill_payment_amount_match:
+                    error_details["Amount"] = bill_payment_amount_match.group(1)
+                
+                utr_date_match = re.search(r'utrGeneratedDate:\s*([^,]+)', full_params_string)
+                if utr_date_match:
+                    error_details["UTR Date"] = utr_date_match.group(1)
+                
+                bill_id_match = re.
+
+[WARNING: Analysis may be incomplete - response was truncated due to length]
+
+==============================================
+RECOMMENDED ACTIONS:
+==============================================
+
+1. Review errors above immediately
+2. Check Due Date system status
+3. Contact development team if critical errors found
+4. Update error tracking system
+5. Monitor system for resolution
+
+==============================================
+END OF REPORT
+==============================================
