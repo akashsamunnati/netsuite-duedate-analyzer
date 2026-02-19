@@ -1,0 +1,70 @@
+DUE DATE LOG ERROR REPORT
+Generated: 2026-02-19T13:48:20.596Z
+Date: 2026-02-19
+Source File: dueDateLogs-2026-02-19.txt
+Status: ERRORS DETECTED (0 errors found)
+Detected by: Gemini AI
+
+==============================================
+ERRORS DETECTED:
+==============================================
+
+```python
+import re
+
+log_content = """
+[2025-09-30 03:42:48.708] 
+============================================================
+[2025-09-30 03:42:48.710] DUE DATE UPDATE SCRIPT EXECUTION
+[2025-09-30 03:42:48.712] Timestamp: 2025-09-30 03:42:48 UTC
+[2025-09-30 03:42:48.713] ============================================================
+
+[2025-09-30 03:42:48.715] Bill Payment ID: 5324860
+[2025-09-30 03:42:48.716] Script triggered by: view
+[2025-09-30 03:42:48.717] User: System
+
+[2025-09-30 03:42:48.866] Bill payment record loaded successfully. Type: vendorpayment, ID: 5324860
+[2025-09-30 03:42:48.870] Bill payment amount retrieved: 200
+[2025-09-30 03:42:48.894] Payment details - Items Count: 1, Payment Status: Confirmed, Payment Method: 7, UTR Date: 10/8/2025
+[2025-09-30 03:42:48.896] CONDITION MET: UTR date exists and payment method is 7 (Sambitron) - Entering UTR Flow
+[2025-09-30 03:42:48.899] 
+--- Processing Apply Item 1 of 1 ---
+[2025-09-30 03:42:48.905] Processing item 0: Apply=true, Transaction Type=VendBill
+[2025-09-30 03:42:48.906] Bill ID retrieved: 5296114 for iteration 0
+[2025-09-30 03:42:48.950] Bill form check: 219 (should not be 338)
+[2025-09-30 03:42:53.451] Invoice ID retrieved: 5296021 from bill 5296114
+[2025-09-30 03:42:54.609] Installment Number: 2, Sales Order ID: 5296009
+[2025-09-30 03:42:54.614] Payment confirmed - proceeding with due date updates for Bill: 5296114, Invoice: 5296021
+[2025-09-30 03:42:55.782] Bill 5296114 updated with supplier payment date: 10/8/2025
+[2025-09-30 03:42:56.282] Transaction origin: Supplier Originated, Repayment select: 2
+[2025-09-30 03:42:56.288] OVERRIDE: Using supplier payment days (10) instead of installment days (10)
+[2025-09-30 03:42:56.291] Processing installment 0: Milestone="On Supplier Payment", Days to add=10
+[2025-09-30 03:42:56.293] 
+=== SIMPLE UTR DATE CHECK ===
+[2025-09-30 03:42:56.295] Invoice: 5296021
+[2025-09-30 03:42:56.297] Current UTR: 10/8/2025
+[2025-09-30 03:42:56.303] AP Bill ID: 5296114
+[2025-09-30 03:42:56.305] Searching for all payments to debug status values...
+[2025-09-30 03:42:56.318] Found 1 payments total (before status filtering)
+[2025-09-30 03:42:56.320] Payment 5324860: Status Text='Confirmed', Status Value='confirmed'
+[2025-09-30 03:42:56.322] ??? Payment 5324860 is confirmed
+[2025-09-30 03:42:56.324] After manual status filtering: 1 confirmed payments
+[2025-09-30 03:42:56.326] Payment 5324860 (Confirmed): UTR 10/8/2025
+[2025-09-30 03:42:56.328] 
+[20
+
+[WARNING: Analysis may be incomplete - response was truncated due to length]
+
+==============================================
+RECOMMENDED ACTIONS:
+==============================================
+
+1. Review errors above immediately
+2. Check Due Date system status
+3. Contact development team if critical errors found
+4. Update error tracking system
+5. Monitor system for resolution
+
+==============================================
+END OF REPORT
+==============================================
