@@ -1,0 +1,92 @@
+DUE DATE LOG ERROR REPORT
+Generated: 2026-03-05T13:42:29.474Z
+Date: 2026-03-05
+Source File: dueDateLogs-2026-03-05.txt
+Status: NO ERRORS FOUND
+Detected by: Gemini AI
+
+==============================================
+ANALYSIS RESULT:
+==============================================
+
+```python
+import re
+
+def analyze_netsuite_log(log_content):
+    """
+    Analyzes NetSuite log content to find SCRIPT ERRORs and extract specific details.
+
+    Args:
+        log_content (str): The full content of the NetSuite log.
+
+    Returns:
+        str: A formatted string of extracted error details, or "NO ERRORS DETECTED".
+    """
+    lines = log_content.strip().split('\n')
+    extracted_errors = []
+    
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        if "SCRIPT ERROR:" in line:
+            error_details = {
+                "timestamp": "N/A",
+                "Type": "Script Error",
+                "Bill Payment ID": "N/A",
+                "Invoice ID": "N/A",
+                "Bill ID": "N/A",
+                "Amount": "N/A",
+                "UTR Date": "N/A",
+                "Error Name": "N/A",
+                "Error Message": "N/A"
+            }
+            
+            # Extract timestamp from the SCRIPT ERROR line
+            timestamp_match = re.match(r'\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\]', line)
+            if timestamp_match:
+                error_details["timestamp"] = timestamp_match.group(1)
+            
+            # Read subsequent lines for error details
+            j = i + 1
+            while j < len(lines):
+                detail_line = lines[j].strip()
+                
+                # Stop if a new timestamped log entry or stack trace starts
+                if re.match(r'\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\]', detail_line) or detail_line.startswith("Stack:"):
+                    break
+                
+                if detail_line.startswith("Bill Payment ID:"):
+                    error_details["Bill Payment ID"] = detail_line.split(":", 1)[1].strip()
+                elif detail_line.startswith("Error Name:"):
+                    error_details["Error Name"] = detail_line.split(":", 1)[1].strip()
+                elif detail_line.startswith("Error Message:"):
+                    error_details["Error Message"] = detail_line.split(":", 1)[1].strip()
+                elif detail_line.startswith("Parameters Used:"):
+                    # Parameters Used can span multiple lines
+                    params_str = detail_line.replace("Parameters Used:", "").strip()
+                    k = j + 1
+                    while k < len(lines) and lines[k].strip() and not lines[k].strip().startswith("Stack:") and not re.match(r'\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\]', lines[k]):
+                        params_str += ", " + lines[k].strip()
+                        k += 1
+                    
+                    # Parse parameters string
+                    params_list = [p.strip() for p in params_str.split(',')]
+                    for param in params_list:
+                        if "billPayId:" in param:
+                            error_details["Bill Payment ID"] = param.split(":", 1)[1].strip()
+                        elif "billPaymentAmount:" in param:
+                            error_details["Amount"] = param.split(":", 1)[1].strip()
+                        elif "utrGeneratedDate:" in param:
+                            error_details["UTR Date"] = param.split(":", 1)[1].strip()
+                        elif "billId:" in param:
+                            error_details["Bill ID"] = param.split(":", 1)[1].strip()
+                        elif "invoiceId:" in param:
+                            error_details["Invoice ID"] = param.split(":", 
+
+[WARNING: Analysis may be incomplete - response was truncated due to length]
+
+The Due Date system appears to be running normally.
+
+==============================================
+END OF REPORT
+==============================================
