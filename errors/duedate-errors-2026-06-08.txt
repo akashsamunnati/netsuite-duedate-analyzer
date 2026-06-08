@@ -1,0 +1,138 @@
+DUE DATE LOG ERROR REPORT
+Generated: 2026-06-08T16:35:13.800Z
+Date: 2026-06-08
+Source File: dueDateLogs-2026-06-08.txt
+Status: NO ERRORS FOUND
+Detected by: Gemini AI
+
+==============================================
+ANALYSIS RESULT:
+==============================================
+
+```python
+import re
+
+def analyze_netsuite_log(log_content):
+    """
+    Analyzes NetSuite log content to find SCRIPT ERRORs and extract specific details.
+
+    Args:
+        log_content (str): The full content of the NetSuite log.
+
+    Returns:
+        str: A formatted string of extracted error details or "NO ERRORS DETECTED".
+    """
+    errors = []
+    log_lines = log_content.strip().split('\n')
+    
+    i = 0
+    while i < len(log_lines):
+        line = log_lines[i]
+        
+        # Rule 1: Find lines that say "SCRIPT ERROR:"
+        if "SCRIPT ERROR:" in line:
+            error_details = {
+                "timestamp": "N/A",
+                "Type": "Script Error",
+                "Bill Payment ID": "N/A",
+                "Invoice ID": "N/A",
+                "Bill ID": "N/A",
+                "Amount": "N/A",
+                "UTR Date": "N/A",
+                "Error Name": "N/A",
+                "Error Message": "N/A"
+            }
+
+            # Extract timestamp from the SCRIPT ERROR line
+            timestamp_match = re.match(r'\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\]', line)
+            if timestamp_match:
+                error_details["timestamp"] = timestamp_match.group(1)
+
+            # Read subsequent lines for error details (Rule 4)
+            j = i + 1
+            while j < len(log_lines):
+                detail_line = log_lines[j].strip()
+
+                # Stop if a new timestamped log entry or stack trace begins
+                if re.match(r'\[\d{4}-\d{2}-\d{2}', detail_line) or detail_line.startswith("Stack:"):
+                    break
+
+                if detail_line.startswith("Bill Payment ID:"):
+                    error_details["Bill Payment ID"] = detail_line.split(":", 1)[1].strip()
+                elif detail_line.startswith("Error Name:"):
+                    error_details["Error Name"] = detail_line.split(":", 1)[1].strip()
+                elif detail_line.startswith("Error Message:"):
+                    error_details["Error Message"] = detail_line.split(":", 1)[1].strip()
+                elif detail_line.startswith("Parameters Used:"):
+                    params_str = detail_line.split(":", 1)[1].strip()
+                    
+                    # Check the next line for additional parameters if it's not a new log entry or stack trace
+                    if j + 1 < len(log_lines) and not log_lines[j+1].strip().startswith("Stack:") and not re.match(r'\[\d{4}-\d{2}-\d{2}', log_lines[j+1]):
+                        # Append the next line's content to params_str and advance j
+                        params_str += ", " + log_lines[j+1].strip()
+                        j += 1 # Increment j to skip this line in the next iteration
+
+                    # Extract specific parameters
+                    param_matches = re.findall(r'(\w+):\s*([^,]+)', params_str)
+                    for key, value in param_matches:
+                        if key == "billPaymentAmount":
+                            error_details["Amount"] = value.strip()
+                        elif key == "utrGeneratedDate":
+                            error_details["UTR Date"] = value.strip()
+                        elif key == "billId":
+                            error_details["Bill ID"] = value.strip()
+                        elif key == "invoiceId":
+                            error_details["Invoice ID"] = value.strip()
+                
+                j += 1
+            
+            errors.append(error_details)
+            i = j # Continue scanning from where the detail extraction stopped
+        else:
+            i += 1
+
+    output_lines = []
+    if not errors:
+        output_lines.append("NO ERRORS DETECTED")
+    else:
+        for idx, error in enumerate(errors):
+            output_lines.append(f"Error {idx+1}: {error['timestamp']}")
+            output_lines.append(f"   Type: {error['Type']}")
+            output_lines.append(f"   Bill Payment ID: {error['Bill Payment ID']}")
+            output_lines.append(f"   Invoice ID: {error['Invoice ID']}")
+            output_lines.append(f"   Bill ID: {error['Bill ID']}")
+            output_lines.append(f"   Amount: {error['Amount']}")
+            output_lines.append(f"   UTR Date: {error['UTR Date']}")
+            output_lines.append(f"   Error Name: {error['Error Name']}")
+            output_lines.append(f"   Error Message: {error['Error Message']}")
+            
+    return "\n".join(output_lines)
+
+# LOG CONTENT provided by the user
+log_content = """
+[2025-09-30 03:42:48.708] 
+============================================================
+[2025-09-30 03:42:48.710] DUE DATE UPDATE SCRIPT EXECUTION
+[2025-09-30 03:42:48.712] Timestamp: 2025-09-30 03:42:48 UTC
+[2025-09-30 03:42:48.713] ============================================================
+
+[2025-09-30 03:42:48.715] Bill Payment ID: 5324860
+[2025-09-30 03:42:48.716] Script triggered by: view
+[2025-09-30 03:42:48.717] User: System
+
+[2025-09-30 03:42:48.866] Bill payment record loaded successfully. Type: vendorpayment, ID: 5324860
+[2025-09-30 03:42:48.870] Bill payment amount retrieved: 200
+[2025-09-30 03:42:48.894] Payment details - Items Count: 1, Payment Status: Confirmed, Payment Method: 7, UTR Date: 10/8/2025
+[2025-09-30 03:42:48.896] CONDITION MET: UTR date exists and payment method is 7 (Sambitron) - Entering UTR Flow
+[2025-09-30 03:42:48.899] 
+--- Processing Apply Item 1 of 1 ---
+[2025-09-30 03:42:48.905] Processing item 0: Apply=true, Transaction Type=VendBill
+[2025-09-30 03:42:48.
+
+[WARNING: Analysis may be incomplete - response was truncated due to length]
+
+The Due Date system appears to be running normally.
+
+==============================================
+END OF REPORT
+==============================================
