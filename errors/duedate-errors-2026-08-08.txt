@@ -1,0 +1,74 @@
+DUE DATE LOG ERROR REPORT
+Generated: 2026-08-08T13:27:25.423Z
+Date: 2026-08-08
+Source File: dueDateLogs-2026-08-08.txt
+Status: ERRORS DETECTED (0 errors found)
+Detected by: Gemini AI
+
+==============================================
+ERRORS DETECTED:
+==============================================
+
+```python
+import re
+
+def parse_netsuite_log(log_content):
+    """
+    Parses NetSuite log content to find SCRIPT ERRORs and extract specific details.
+
+    Args:
+        log_content (str): The full content of the NetSuite log.
+
+    Returns:
+        list: A list of dictionaries, each representing a parsed error.
+              Returns an empty list if no SCRIPT ERRORs are found.
+    """
+    errors = []
+    lines = log_content.strip().split('\n')
+    i = 0
+
+    while i < len(lines):
+        line = lines[i]
+        # Rule 1: Find lines that say "SCRIPT ERROR:"
+        script_error_match = re.match(r'^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\] SCRIPT ERROR:', line)
+        
+        if script_error_match:
+            error_timestamp = script_error_match.group(1)
+            current_error = {
+                "Timestamp": error_timestamp,
+                "Type": "Script Error",
+                "Bill Payment ID": "N/A",
+                "Invoice ID": "N/A",
+                "Bill ID": "N/A",
+                "Amount": "N/A",
+                "UTR Date": "N/A",
+                "Error Name": "N/A",
+                "Error Message": "N/A"
+            }
+            
+            # Rule 4: Read subsequent lines for error details
+            j = i + 1
+            while j < len(lines):
+                detail_line = lines[j].strip()
+                
+                # Stop if a new log entry starts or stack trace begins
+                if re.match(r'^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\]', detail_line) or detail_line.startswith("Stack:"):
+                    break
+                
+                if
+
+[WARNING: Analysis may be incomplete - response was truncated due to length]
+
+==============================================
+RECOMMENDED ACTIONS:
+==============================================
+
+1. Review errors above immediately
+2. Check Due Date system status
+3. Contact development team if critical errors found
+4. Update error tracking system
+5. Monitor system for resolution
+
+==============================================
+END OF REPORT
+==============================================
