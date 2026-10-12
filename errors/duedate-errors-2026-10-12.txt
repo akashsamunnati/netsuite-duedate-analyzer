@@ -1,0 +1,139 @@
+DUE DATE LOG ERROR REPORT
+Generated: 2026-10-12T21:22:14.466Z
+Date: 2026-10-12
+Source File: dueDateLogs-2026-10-12.txt
+Status: ERRORS DETECTED (0 errors found)
+Detected by: Gemini AI
+
+==============================================
+ERRORS DETECTED:
+==============================================
+
+```python
+import re
+
+def analyze_netsuite_log(log_content):
+    """
+    Analyzes NetSuite log content to find SCRIPT ERRORs and extract specific details.
+
+    Args:
+        log_content (str): The full content of the NetSuite log.
+
+    Returns:
+        list: A list of dictionaries, each representing an extracted error,
+              or an empty list if no errors are found.
+    """
+    errors = []
+    lines = log_content.strip().split('\n')
+    
+    # Regex to find SCRIPT ERROR lines and capture their timestamp
+    script_error_pattern = re.compile(r"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\] SCRIPT ERROR:")
+    
+    # Regex to extract parameters from the "Parameters Used:" line and the line after it
+    param_amount_pattern = re.compile(r"billPaymentAmount: (\d+)")
+    param_utr_date_pattern = re.compile(r"utrGeneratedDate: (\S+)")
+    param_bill_id_pattern = re.compile(r"billId: (\d+)")
+    param_invoice_id_pattern = re.compile(r"invoiceId: (\d+)")
+
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        match = script_error_pattern.match(line)
+
+        if match:
+            error_timestamp = match.group(1)
+            current_error = {
+                "timestamp": error_timestamp,
+                "Type": "Script Error",
+                "Bill Payment ID": "N/A",
+                "Invoice ID": "N/A",
+                "Bill ID": "N/A",
+                "Amount": "N/A",
+                "UTR Date": "N/A",
+                "Error Name": "N/A",
+                "Error Message": "N/A"
+            }
+            
+            # Start looking for error details from the next line
+            j = i + 1
+            while j < len(lines):
+                detail_line = lines[j].strip()
+
+                # Stop processing this error block if we hit another timestamped line
+                # or the "Stack:" line (which marks the end of the structured error details)
+                if re.match(r"\[\d{4}-\d{2}-\d{2}", detail_line) or detail_line.startswith("Stack:"):
+                    break
+
+                if detail_line.startswith("Bill Payment ID:"):
+                    current_error["Bill Payment ID"] = detail_line.split(":", 1)[1].strip()
+                elif detail_line.startswith("Error Name:"):
+                    current_error["Error Name"] = detail_line.split(":", 1)[1].strip()
+                elif detail_line.startswith("Error Message:"):
+                    current_error["Error Message"] = detail_line.split(":", 1)[1].strip()
+                elif detail_line.startswith("Parameters Used:"):
+                    # Extract Amount and UTR Date from this line
+                    amount_match = param_amount_pattern.search(detail_line)
+                    if amount_match:
+                        current_error["Amount"] = amount_match.group(1)
+                    utr_date_match = param_utr_date_pattern.search(detail_line)
+                    if utr_date_match:
+                        current_error["UTR Date"] = utr_date_match.group(1)
+                elif "billId:" in detail_line and "invoiceId:" in detail_line:
+                    # This line often follows "Parameters Used:" and contains Bill ID and Invoice ID
+                    bill_id_match = param_bill_id_pattern.search(detail_line)
+                    if bill_id_match:
+                        current_error["Bill ID"] = bill_id_match.group(1)
+                    invoice_id_match = param_invoice_id_pattern.search(detail_line)
+                    if invoice_id_match:
+                        current_error["Invoice ID"] = invoice_id_match.group(1)
+                
+                j += 1
+            
+            errors.append(current_error)
+            i = j # Continue scanning from where the error block ended
+        else:
+            i += 1 # Move to the next line if no SCRIPT ERROR found
+
+    return errors
+
+# LOG CONTENT provided in the problem description
+LOG_CONTENT = """
+[2025-09-30 03:42:48.708] 
+============================================================
+[2025-09-30 03:42:48.710] DUE DATE UPDATE SCRIPT EXECUTION
+[2025-09-30 03:42:48.712] Timestamp: 2025-09-30 03:42:48 UTC
+[2025-09-30 03:42:48.713] ============================================================
+
+[2025-09-30 03:42:48.715] Bill Payment ID: 5324860
+[2025-09-30 03:42:48.716] Script triggered by: view
+[2025-09-30 03:42:48.717] User: System
+
+[2025-09-30 03:42:48.866] Bill payment record loaded successfully. Type: vendorpayment, ID: 5324860
+[2025-09-30 03:42:48.870] Bill payment amount retrieved: 200
+[2025-09-30 03:42:48.894] Payment details - Items Count: 1, Payment Status: Confirmed, Payment Method: 7, UTR Date: 10/8/2025
+[2025-09-30 03:42:48.896] CONDITION MET: UTR date exists and payment method is 7 (Sambitron) - Entering UTR Flow
+[2025-09-30 03:42:48.899] 
+--- Processing Apply Item 1 of 1 ---
+[2025-09-30 03:42:48.905] Processing item 0: Apply=true, Transaction Type=VendBill
+[2025-09-30 03:42:48.906] Bill ID retrieved: 5296114 for iteration 0
+[2025-09-30 03:42:48.950] Bill form check: 219 (should not be 338)
+[2025-09-30 03:42:53.451] Invoice ID retrieved: 5296021 from bill 5296114
+[2025-09-30 03:42:54.609] Installment Number: 2, Sales Order ID: 5296009
+[2025-09-30 03:42:54.614] Payment confirmed - proceeding with due date updates for Bill: 5296114, Invoice: 5296021
+[2025-09
+
+[WARNING: Analysis may be incomplete - response was truncated due to length]
+
+==============================================
+RECOMMENDED ACTIONS:
+==============================================
+
+1. Review errors above immediately
+2. Check Due Date system status
+3. Contact development team if critical errors found
+4. Update error tracking system
+5. Monitor system for resolution
+
+==============================================
+END OF REPORT
+==============================================
